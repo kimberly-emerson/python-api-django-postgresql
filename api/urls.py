@@ -23,7 +23,7 @@ from api.router import router
 
 
 urlpatterns = [
-    path("api", include(router.urls)),
+    path("", include(router.urls)),
     path("api/auth/", include("rest_framework.urls")),
     path("api/token/",
          TokenObtainPairView.as_view(), name="token_obtain_pair"),

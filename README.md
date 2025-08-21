@@ -129,11 +129,11 @@ ri api/views.py
 ni api/router.py
 ni api/config/swagger.py
 ni api/urls.py
-ni api/models/app_user_model.py
-ni api/schemas/app_user_serializer.py
+ni api/schemas/group_serializer.py
+ni api/schemas/user_serializer.py
 ni api/templates/base.html
-ni api/views/app_user_login_view.py
-ni api/views/app_user_register_view.py
+ni api/views/group_viewset.py
+ni api/views/user_viewset.py
 ni logs
 ni tests
 ni .env

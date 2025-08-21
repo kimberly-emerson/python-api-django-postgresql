@@ -23,9 +23,15 @@ Usage:
 """
 
 from rest_framework.routers import DefaultRouter
+from api.views.user_viewset import UserViewSet
+from api.views.group_viewset import GroupViewSet
 from api.views.address_type_viewset import AddressTypeViewSet
 
 router = DefaultRouter()
+
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'groups', GroupViewSet, basename='group')
+
 router.register(r'address-types',
                 AddressTypeViewSet,
                 basename='address-type')

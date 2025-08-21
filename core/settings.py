@@ -141,6 +141,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.IsAdminUser',
     ),
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
 SWAGGER_SETTINGS = {
@@ -154,6 +157,8 @@ SWAGGER_SETTINGS = {
 
     },
     'USE_SESSION_AUTH': False,
+    "DEFAULT_AUTO_SCHEMA_CLASS": "api.config.swagger.TaggedAutoSchema",
+
 }
 
 REDOC_SETTINGS = {
