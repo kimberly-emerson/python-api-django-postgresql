@@ -1,0 +1,30 @@
+[project]
+name = "python-api-django-postgresql"
+version = "0.1.0"
+description = "Python API Demo project (Django/REST Framework/PostgreSQL) managed by PDM"
+authors = [
+    {name = "kimberly-emerson", email = "kimberly.emerson@outlook.com"},
+]
+dependencies = [
+    "django>=4.2",
+    "djangorestframework>=3.16.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "drf-yasg[validation]>=1.21.10",
+    "python-dotenv>=1.1.1",
+    "django-cors-headers>=4.7.0",
+    "django-filter>=25.1",
+    "python-decouple>=3.8",
+]
+requires-python = "==3.13.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+adminuser = "python manage.py createsuperuser"
+makemigrations "python manage.py makemigrations"
+migrate = "python manage.py migrate"
+start = "python manage.py runserver"
+post_init = { composite = ["pdm install", "adminuser", "makemigrations", "migrate", "start"] }
