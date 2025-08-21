@@ -83,6 +83,7 @@ gh issue create --title "Project Setup" --project "python-api-django-postgresql"
 pdm add djangorestframework
 pdm add djangorestframework-simplejwt
 pdm add drf-yasg[validation]
+pdm add psycopg2
 pdm add python-dotenv
 pdm add django-cors-headers
 pdm add django-filter
