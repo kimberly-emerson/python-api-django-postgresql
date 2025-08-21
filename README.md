@@ -46,6 +46,37 @@ python manage.py startapp api
 . .venv\Scripts\activate
 ```
 
+### GitHub Repository Setup
+
+```powershell
+# initialize repo
+git init
+# create repo
+gh repo create python-api-django-postgresql --public --source=.
+# verify remote origin
+git remote --verbose
+# add repo description
+gh repo edit --description 'Python API demo project'
+# add repo topics
+gh repo edit --add-topic api
+gh repo edit --add-topic python
+gh repo edit --add-topic django
+gh repo edit --add-topic django-rest-framework
+gh repo edit --add-topic drf-yasg
+gh repo edit --add-topic postgresql
+gh repo edit --add-topic jwt-auth
+gh repo edit --add-topic pdm
+```
+
+### GitHub Project Setup
+
+```powershell
+# create project
+gh project create --owner kimberly-emerson --title python-api-django-postgresql
+# create issue
+gh issue create --title "Project Setup" --project "python-api-django-postgresql" --label 'enhancement' --assignee '@me'
+```
+
 ### 📦 Install Dependencies
 
 ```powershell
@@ -84,6 +115,7 @@ md utils
 #### Files
 
 ℹ️ `db.sqlite3` is removed because the file is created on initialization and the project uses PostgreSQL instead.
+ℹ️ `/api` Python files are removed because the project structure contains folder and modular models, schemas, views, etc.
 
 ```powershell
 ri db.sqlite3
