@@ -24,7 +24,7 @@ distribution = false
 
 [tool.pdm.scripts]
 adminuser = "python manage.py createsuperuser"
-makemigrations "python manage.py makemigrations"
+makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
 start = "python manage.py runserver"
 post_init = { composite = ["pdm install", "adminuser", "makemigrations", "migrate", "start"] }
