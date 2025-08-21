@@ -24,10 +24,9 @@ from api.router import router
 
 urlpatterns = [
     path("api/", include(router.urls)),
-    path("", include("rest_framework.urls")),
-    path("api/token/",
+    path("auth/token/",
          TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/",
+    path("auth/token/refresh/",
          TokenRefreshView.as_view(), name="token_refresh"),
     path("<format>/",
          schema_view.without_ui(cache_timeout=0), name="schema-json"
