@@ -23,8 +23,8 @@ from api.router import router
 
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("api/auth/", include("rest_framework.urls")),
+    path("api/", include(router.urls)),
+    path("", include("rest_framework.urls")),
     path("api/token/",
          TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/",
@@ -36,6 +36,6 @@ urlpatterns = [
          schema_view.with_ui("swagger", cache_timeout=0),
          name="schema-swagger-ui",
          ),
-    path("api/docs/redoc",
+    path("api/redoc",
          schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
