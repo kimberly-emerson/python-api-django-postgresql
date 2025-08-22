@@ -26,7 +26,7 @@ The data for this API is supplied by a PostgreSQL database created using the [py
 |Authentication|[![{} JWT](https://img.shields.io/badge/%7B%7D%20Simple%20JWT-Auth-white?style=flat-square&labelColor=2ea44f&color=ffffff&logoColor=white)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)|
 |Testing||
 |Documentation|[![Swagger Badge](https://img.shields.io/badge/-Swagger-%23Clojure?style=flat-square&logo=swagger&logoColor=white)](https://drf-yasg.readthedocs.io/en/stable/readme.html)|
-|Dependency Management|[![PDM](https://img.shields.io/badge/PDM-managed-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)|
+|Dependency Management|[![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)|
 |Environment|[![DotEnv Badge](https://img.shields.io/badge/16.0.1-0?label=dotenv&style=flat-square&logo=dotenv&labelColor=black&logoColor=white&color=white)](https://pypi.org/project/python-dotenv/)|
 
 ## ✅ Project Setup Instructions
