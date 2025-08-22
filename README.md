@@ -23,7 +23,7 @@ The data for this API is supplied by a PostgreSQL database created using the [py
 |Web Framework|[![Django Badge](https://img.shields.io/badge/django-5.2.5-4?logo=django&style=flat-square&labelColor=%23092E20&color=white)](https://www.djangoproject.com/)|
 |REST Framework|[![Django REST Framework Badge](https://img.shields.io/badge/django--rest--framework-3.16.1-blue?style=flat-square&labelColor=black&logo=django&logoColor=white&color=white)](https://www.django-rest-framework.org/)|
 |Database|[![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/)|
-|Authentication|[![{} JWT](https://img.shields.io/badge/%7B%7D%20JWT-Auth-white?style=flat-square&labelColor=2ea44f&color=ffffff&logoColor=white)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)|
+|Authentication|[![{} JWT](https://img.shields.io/badge/%7B%7D%20Simple%20JWT-Auth-white?style=flat-square&labelColor=2ea44f&color=ffffff&logoColor=white)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)|
 |Testing||
 |Documentation|[![Swagger Badge](https://img.shields.io/badge/-Swagger-%23Clojure?style=flat-square&logo=swagger&logoColor=white)](https://drf-yasg.readthedocs.io/en/stable/readme.html)|
 |Dependency Management|[![PDM](https://img.shields.io/badge/PDM-managed-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)|
