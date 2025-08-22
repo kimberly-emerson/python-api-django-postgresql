@@ -281,7 +281,7 @@ Once we’ve discussed your proposal, feel free to submit a pull request. Be sur
 
 ## ⚖️ License
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/license/mit)
+[![MIT License Badge](https://img.shields.io/badge/MIT-License-white?labelColor=goldenrod&logo=os&logoColor=white)](https://pdm.fming.dev)
 
 This project is licensed under the MIT License.
 
