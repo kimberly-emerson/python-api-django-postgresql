@@ -38,7 +38,10 @@ Notes:
 - Ideal for admin dashboards, onboarding workflows, and legacy DB integration
 """
 
+import logging
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from drf_yasg import openapi
@@ -64,7 +67,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
 
     Methods:
         - `list`: Returns all address types with count and serialized data
-        - `retrieve`: Returns a single address type by ID
         - `create`: Creates a new address type, ignoring client-supplied ID
         - `update`: Replaces an address type, excluding ID field
         - `partial_update`: Applies partial changes, excluding ID field
@@ -78,9 +80,9 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         - Swagger decorators provide operation summaries, descriptions, and
         response schemas
     """
-
     queryset = AddressType.objects.all()  # pylint: disable=no-member
     serializer_class = AddressTypeSerializer
+    lookup_field = 'address_type_id'
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'put',
                          'patch', 'delete', 'head', 'options']
@@ -115,6 +117,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
         # serialize data
         serializer = self.get_serializer(queryset, many=True)
+        logging.info("SUCCESS: retrieved list -- %s", serializer.data)
 
         return Response({
             'count': queryset.count(),
@@ -137,18 +140,24 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         """
         Retrieves a single AddressType record by its ID.
 
-        Returns serialized data for the specified object.
+        Returns serialized data for the specified AddressType(address_type_id).
         """
+        try:
+            # get AddressType instance
+            instance = get_object_or_404(AddressType,
+                                         address_type_id=kwargs['address_type_id'])
+            # serialize data
+            serializer = self.get_serializer(instance)
+            logging.info("SUCCESS: retrieved record -- %s", serializer.data)
 
-        # gets the queryset
-        instance = self.get_object()
-        # serialize data
-        serializer = self.get_serializer(instance, many=True)
-
-        return Response({
-            'count': instance.count(),
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
+            return Response({
+                'count': 1,
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:  # pylint: disable=broad-except
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
@@ -169,15 +178,26 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
 
         Ignores client-supplied ID fields.
         """
+        try:
+            # serialize data
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            logging.info("SUCCESS: created -- %s", serializer.data)
 
-        data = request.data.copy()
-        data.pop('address_type_id', None)  # remove 'id' if present
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
+            return Response({
+                'data': serializer.data
+                }, status=status.HTTP_201_CREATED)
+
+        except ValidationError as error:
+            return Response({
+                'error': error
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:  # pylint: disable=broad-except
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
@@ -196,17 +216,30 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         """
         Fully updates an existing AddressType record.
 
-        Replaces all fields except ID.
-        """
+        Replaces all fields that are not read only:
+        - `name`
 
-        data = request.data.copy()
-        data.pop('address_type_id', None)
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_200_OK)
+        PRIMARY KEY: `address_type_id` field is excluded.
+        """
+        try:
+            instance = get_object_or_404(AddressType,
+                                         address_type_id=
+                                         kwargs['address_type_id'])
+            # serialize data
+            serializer = self.get_serializer(instance, data=request.data, partial=False)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            logging.info("SUCCESS: updated -- %s", serializer.data)
+
+            return Response({
+                'data': serializer.data
+                }, status=status.HTTP_200_OK)
+
+        except Exception as e:  # pylint: disable=broad-except
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
@@ -223,19 +256,35 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     )
     def partial_update(self, request, *args, **kwargs) -> AddressType:
         """
-        Partially updates an AddressType record.
+        Partially updates an existing AddressType record.
 
-        Applies changes to specified fields only. ID field is excluded.
+        Replaces any fields included in the request that are not read only:
+        - `name`
+
+        PRIMARY KEY: `address_type_id` field is excluded.
         """
 
-        data = request.data.copy()
-        data.pop('address_type_id', None)
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_200_OK)
+        try:
+            instance = get_object_or_404(AddressType,
+                                         address_type_id=
+                                         kwargs['address_type_id'])
+            # serialize data
+            serializer = self.get_serializer(instance,
+                                             data=request.data,
+                                             partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            logging.info("SUCCESS: updated -- %s", serializer.data)
+
+            return Response({
+                'data': serializer.data
+                }, status=status.HTTP_200_OK)
+
+        except Exception as e:  # pylint: disable=broad-except
+            return Response({
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
@@ -245,26 +294,40 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         operation_summary="Delete an address type",
         request_body=AddressTypeSerializer,
         responses={
-            200: openapi.Response("Address type deleted successfully",
+            204: openapi.Response("Address type deleted successfully",
                                   AddressTypeSerializer),
             401: "User not authorized."
         }
     )
-    def destroy(self, request, *args, **kwargs) -> None:
+    def destroy(self, request, *args, **kwargs) -> Response:
         """
         Deletes an AddressType record by ID.
 
-        Requires admin privileges. Returns 204 No Content on success.
-        """
+        Requires admin privileges.
 
-        instance = self.get_object()
-        if not request.user.is_staff:
+        Returns 204 No Content on success.
+        """
+        try:
+            instance = get_object_or_404(AddressType,
+                                         address_type_id=
+                                         kwargs['address_type_id'])
+
+            if not request.user.is_staff:
+                return Response({
+                    'message': 'You do not have permission to delete this item.'
+                    },
+                    status=status.HTTP_403_FORBIDDEN)
+
+            instance.delete()
+
+            logging.info("SUCCESS: Address Type deleted -- %s", instance.name)
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Exception as e:  # pylint: disable=broad-except
             return Response({
-                'message': 'You do not have permission to delete this item.'
-                },
-                status=status.HTTP_403_FORBIDDEN)
-        self.perform_destroy(instance=instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @swagger_auto_schema(
         operation_description="Return metadata for AddressType endpoints,"

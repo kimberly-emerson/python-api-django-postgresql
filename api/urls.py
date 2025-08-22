@@ -49,14 +49,12 @@ urlpatterns = [
         name="list",
         ),
      path(
-        "api/address-types/<int:pk>/",
+        "api/address-types/<int:address_type_id>/",
         AddressTypeViewSet.as_view({
             "get": "retrieve",
             "patch": "partial_update",
             "put": "update",
             "delete": "destroy",
-            "next": "next",
-            "previous": "previous"
         }),
         name="retrieve",
         ),

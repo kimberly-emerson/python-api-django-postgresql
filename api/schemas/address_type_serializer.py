@@ -89,6 +89,16 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
             'modified_date',
         ]
 
+    def get_object_url(self, obj, view_name: str, request):
+        """
+        Returns the reverse URL for a given object and view name, or None
+        if the object is None.
+        """
+        if obj:
+            return reverse(view_name, args=[obj.address_type_id], request=request)
+        else:
+            return None
+
     def get_links(self, obj):
         """
         tba
@@ -97,31 +107,24 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
 
         # Get next object
         next_obj = (
-            AddressType.objects.filter(pk__gt=obj.pk)  # pylint: disable=no-member
-            .order_by("pk")
+            AddressType.objects.filter(address_type_id__gt=obj.address_type_id)  # pylint: disable=no-member
+            .order_by("address_type_id")
             .first()
         )
         # Get previous object
-        prev_obj = (
-            AddressType.objects.filter(pk__lt=obj.pk)  # pylint: disable=no-member
-            .order_by("-pk")
+        previous_obj = (
+            AddressType.objects.filter(address_type_id__lt=obj.address_type_id)  # pylint: disable=no-member
+            .order_by("-address_type_id")
             .first()
         )
 
         return {
-            "next": reverse("retrieve",
-                            args=[next_obj.pk], request=request)
-            if next_obj
-            else None,
-
-            "previous": reverse("retrieve",
-                                args=[prev_obj.pk], request=request)
-            if prev_obj
-            else None,
+            "next": self.get_object_url(next_obj, "retrieve", request),
+            "previous": self.get_object_url(previous_obj, "retrieve", request),
 
             # GET: retrieve
             "self": {
-                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
                 "method": "GET"
             },
 
@@ -137,15 +140,15 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
 
             # Item-level operations (PUT, PATCH, DELETE)
             "update": {
-                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
                 "method": "PUT"
             },
             "partial_update": {
-                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
                 "method": "PATCH"
             },
             "destroy": {
-                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
                 "method": "DELETE"
             }
         }
