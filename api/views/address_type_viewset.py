@@ -86,6 +86,13 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
                          'patch', 'delete', 'head', 'options']
     swagger_tags = ['Addresses']
 
+    def get_serializer_context(self):
+        """
+        tba
+        """
+
+        return {'request': self.request}
+
     @swagger_auto_schema(
         security=[{'Bearer': []}],
         operation_description="Retrieve a list of all AddressType records,"

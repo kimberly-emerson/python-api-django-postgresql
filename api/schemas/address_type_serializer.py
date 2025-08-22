@@ -26,10 +26,12 @@ docs
 
 
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from api.models.address_type_model import AddressType
+from api.utils.hateoas_mixin import HATEOASMixin
 
 
-class AddressTypeSerializer(serializers.ModelSerializer):
+class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
     """
     Serializer for the AddressType model.
 
@@ -86,3 +88,64 @@ class AddressTypeSerializer(serializers.ModelSerializer):
             'rowguid',
             'modified_date',
         ]
+
+    def get_links(self, obj):
+        """
+        tba
+        """
+        request = self.context.get("request")
+
+        # Get next object
+        next_obj = (
+            AddressType.objects.filter(pk__gt=obj.pk)  # pylint: disable=no-member
+            .order_by("pk")
+            .first()
+        )
+        # Get previous object
+        prev_obj = (
+            AddressType.objects.filter(pk__lt=obj.pk)  # pylint: disable=no-member
+            .order_by("-pk")
+            .first()
+        )
+
+        return {
+            "next": reverse("retrieve",
+                            args=[next_obj.pk], request=request)
+            if next_obj
+            else None,
+
+            "previous": reverse("retrieve",
+                                args=[prev_obj.pk], request=request)
+            if prev_obj
+            else None,
+
+            # GET: retrieve
+            "self": {
+                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "method": "GET"
+            },
+
+            # GET: list, POST: create
+            "list": {
+                "href": reverse("list", request=request),
+                "method": "GET"
+            },
+            "create": {
+                "href": reverse("list", request=request),
+                "method": "POST"
+            },
+
+            # Item-level operations (PUT, PATCH, DELETE)
+            "update": {
+                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "method": "PUT"
+            },
+            "partial_update": {
+                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "method": "PATCH"
+            },
+            "destroy": {
+                "href": reverse("retrieve", args=[obj.pk], request=request),
+                "method": "DELETE"
+            }
+        }

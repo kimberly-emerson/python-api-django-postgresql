@@ -20,21 +20,45 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 from api.config.swagger import schema_view
 from api.router import router
-
+from api.views.address_type_viewset import AddressTypeViewSet
 
 urlpatterns = [
-    path("api/", include(router.urls)),
-    path("auth/token/",
-         TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("auth/token/refresh/",
-         TokenRefreshView.as_view(), name="token_refresh"),
-    path("<format>/",
-         schema_view.without_ui(cache_timeout=0), name="schema-json"
-         ),
-    path("api/docs",
-         schema_view.with_ui("swagger", cache_timeout=0),
-         name="schema-swagger-ui",
-         ),
-    path("api/redoc",
-         schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+     path("api/", include(router.urls)),
+     path("auth/token/",
+          TokenObtainPairView.as_view(), name="token_obtain_pair"),
+     path("auth/token/refresh/",
+          TokenRefreshView.as_view(), name="token_refresh"),
+     path("<format>/",
+          schema_view.without_ui(cache_timeout=0), name="schema-json"
+          ),
+     path("api/docs/",
+          schema_view.with_ui("swagger", cache_timeout=0),
+          name="schema-swagger-ui",
+          ),
+     path("api/redoc/",
+          schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+
+     # named routes
+     # * AddressType
+     path(
+        "api/address-types/",
+        AddressTypeViewSet.as_view({
+            "get": "list",
+            "post": "create",
+        }),
+        name="list",
+        ),
+     path(
+        "api/address-types/<int:pk>/",
+        AddressTypeViewSet.as_view({
+            "get": "retrieve",
+            "patch": "partial_update",
+            "put": "update",
+            "delete": "destroy",
+            "next": "next",
+            "previous": "previous"
+        }),
+        name="retrieve",
+        ),
+
 ]
