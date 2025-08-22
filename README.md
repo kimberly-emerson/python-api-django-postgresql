@@ -115,7 +115,8 @@ md utils
 
 #### Files
 
-ℹ️ `db.sqlite3` is removed because the file is created on initialization and the project uses PostgreSQL instead.
+ℹ️ `db.sqlite3` is removed because the file is created on initialization and the project uses PostgreSQL instead.  
+
 ℹ️ `/api` Python files are removed because the project structure contains folder and modular models, schemas, views, etc.
 
 ```powershell
