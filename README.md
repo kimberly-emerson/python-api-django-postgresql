@@ -1,4 +1,4 @@
-# Python API Demo
+# python-api-django-postgresql
 
 ![GitHub Tag](https://img.shields.io/github/v/tag/kimberly-emerson/python-api-django-postgresql?include_prereleases&style=flat-square&logo=github&labelColor=black&color=%2300c950)
 
