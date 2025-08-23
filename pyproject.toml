@@ -15,6 +15,7 @@ dependencies = [
     "django-filter>=25.1",
     "python-decouple>=3.8",
     "psycopg2>=2.9.10",
+    "drf-standardized-errors>=0.15.0",
 ]
 requires-python = "==3.13.*"
 readme = "README.md"

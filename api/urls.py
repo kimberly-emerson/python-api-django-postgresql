@@ -41,7 +41,7 @@ urlpatterns = [
      # named routes
      # * AddressType
      path(
-        "api/address-types/",
+        "api/address-types",
         AddressTypeViewSet.as_view({
             "get": "list",
             "post": "create",
@@ -49,7 +49,7 @@ urlpatterns = [
         name="list",
         ),
      path(
-        "api/address-types/<int:address_type_id>/",
+        "api/address-types/<int:address_type_id>",
         AddressTypeViewSet.as_view({
             "get": "retrieve",
             "patch": "partial_update",
