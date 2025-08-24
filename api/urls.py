@@ -45,6 +45,8 @@ urlpatterns = [
         AddressTypeViewSet.as_view({
             "get": "list",
             "post": "create",
+            "options": "options",
+            "head": "head"
         }),
         name="list",
         ),

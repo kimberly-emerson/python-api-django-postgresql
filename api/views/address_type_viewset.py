@@ -409,12 +409,12 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     responses = {**success_response, **error_responses}
 
     @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_description="Delete an AddressType record by ID."
-        "Requires admin privileges. Returns 204 No Content on success.",
         operation_id="destroy",
         operation_summary="Delete an address type",
+        operation_description="Delete an AddressType record by ID."
+        "Requires admin privileges. Returns 204 No Content on success.",
         request_body=AddressTypeSerializer,
+        security=[{'Bearer': []}],
         responses=responses
     )
     def destroy(self, request, *args, **kwargs) -> Response:
@@ -453,9 +453,14 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     responses = {**success_response, **error_responses}
 
     @swagger_auto_schema(
+        operation_id="options",
+        operation_summary="Retrieve metadata for AddressType endpoints.",
         operation_description="Return metadata for AddressType endpoints,"
         "including allowed methods and request formats."
-        "Used by clients for discovery."
+        "Used by clients for discovery.",
+        request_body=AddressTypeSerializer,
+        security=[{'Bearer': []}],
+        responses=responses
     )
     def options(self, request, *args, **kwargs):
         """
@@ -497,6 +502,11 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         200: openapi.Response(
                         description="Headers only, no body",
                         headers={
+                            'Accept': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='Response accept'
+                                '(application/json)'
+                            ),
                             'Content-Type': openapi.Schema(
                                 type=openapi.TYPE_STRING,
                                 description='Response content type'
@@ -518,6 +528,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     responses = {**success_response, **error_responses}
 
     @swagger_auto_schema(
+        operation_id="head",
         operation_summary="Retrieve metadata headers for address types",
         operation_description=(
             "Returns HTTP headers without a response body. Useful for checking"
@@ -555,6 +566,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         """
         total_count = self.get_queryset().count()
         headers = {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': 'Bearer <access_token>',
             'Allow': 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',

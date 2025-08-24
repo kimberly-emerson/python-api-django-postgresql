@@ -95,7 +95,10 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
         if the object is None.
         """
         if obj:
-            return reverse(view_name, args=[obj.address_type_id], request=request)
+            return reverse(
+                view_name,
+                args=[obj.address_type_id],
+                request=request)
         else:
             return None
 
@@ -107,7 +110,8 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
 
         # Get next object
         next_obj = (
-            AddressType.objects.filter(address_type_id__gt=obj.address_type_id)  # pylint: disable=no-member
+            AddressType.objects.filter(  # pylint: disable=no-member
+                address_type_id__gt=obj.address_type_id)
             .order_by("address_type_id")
             .first()
         )
@@ -124,7 +128,9 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
 
             # GET: retrieve
             "self": {
-                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
+                "href": reverse("retrieve",
+                                args=[obj.address_type_id],
+                                request=request),
                 "method": "GET"
             },
 
@@ -140,15 +146,34 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
 
             # Item-level operations (PUT, PATCH, DELETE)
             "update": {
-                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
+                "href": reverse("retrieve",
+                                args=[obj.address_type_id],
+                                request=request),
                 "method": "PUT"
             },
             "partial_update": {
-                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
+                "href": reverse("retrieve",
+                                args=[obj.address_type_id],
+                                request=request),
                 "method": "PATCH"
             },
             "destroy": {
-                "href": reverse("retrieve", args=[obj.address_type_id], request=request),
+                "href": reverse("retrieve",
+                                args=[obj.address_type_id],
+                                request=request),
                 "method": "DELETE"
-            }
+            },
+
+            # OPTIONS
+            "options": {
+                "href": reverse("options",
+                                request=request),
+                "method": "OPTIONS"
+            },
+
+            # HEAD
+            "head": {
+                "href": reverse("head"),
+                "method": "HEAD"
+            },
         }
