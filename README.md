@@ -15,24 +15,24 @@ This repository showcases a modular, production-ready Django REST API powered by
 
 ### Key Features
 
-- Clean RESTful architecture using Django and DRF
+- Clean *RESTful architecture* using **Django** and **Django REST Framework**
 - JWT-based authentication with multi-method support (JWT, session, token)
-- Centralized error handling via drf-standardized-errors
-- Auto-generated Swagger & ReDoc docs with deep linking and JWT integration
+- Centralized error handling via `drf-standardized-errors`
+- Auto-generated **Swagger** & **ReDoc** docs with deep linking and JWT integration
 - Environment-driven configuration using `.env` and `python-decouple`
-- Multi-schema PostgreSQL support for domain-separated data access
-- Structured logging with separate debug, info, and error channels
+- Multi-schema **PostgreSQL** support for domain-separated data access
+- Structured Django logging with separate debug, info, and error channels
 
-## 📅 Data Pipeline
+## 𝄜 Data Pipeline
 
 The API is powered by a PostgreSQL database populated via a robust Python-driven ETL pipeline. The source data originates from the `AdventureWorks2022` SQL Server database and is seamlessly migrated into the `aw_sales` PostgreSQL schema using the companion repo:
 
-Behind the scenes, the ETL process:
-- Extracts raw sales and customer data from SQL Server
-- Transforms it into clean, query-ready formats
-- Loads it into PostgreSQL for fast, reliable API access
-Whether you're building dashboards, running analytics, or integrating with other services, this setup ensures your data is structured, accessible, and production-ready.
+The ETL process:
+- Creates PostgreSQL schemas and tables with SQL CREATE queries
+- Extracts raw sales and customer data from SQL Server with SQL SELECT queries
+- Loads the extracted data into PostgreSQL with SQL INSERT queries for fast, reliable API access
 
+Whether you're building dashboards, running analytics, or integrating with other services, this setup ensures the data is structured, accessible, and production-ready.
 
 ## #️⃣ Technology Stack
 
@@ -131,7 +131,7 @@ md api/config
 md api/models
 md api/schemas
 md api/views
-md utils
+md api/utils
 ```
 
 #### Files
@@ -167,24 +167,25 @@ ni .env.example
 
 The .env files (`.env` and `.env.example`) should contain the following environment variables.
 
-❗Change the DB_NAME, DB_USERNAME, and DB_PASSWORD environment variables for the target PostgreSQL database.
+❗Change the environment variables to match the required database and project structure requirements.
 
 ```yaml
 # Application Environment
 APP_ENV=local
 APP_DEBUG=true
-APP_URL=http://localhost:3000
+APP_URL=http://localhost:8000
 
 # Database Configuration
 DB_CONNECTION=postgresql
 DB_HOSTNAME=localhost
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_NAME=database
-DB_USERNAME=username
-DB_PASSWORD=password
+DB_NAME=[database]
+DB_USERNAME=[username]
+DB_PASSWORD=[password]
 
 # Directory Path
+ROOT_DIR=/
 APP_DIR=/api
 CORE_DIR=/core
 LOGS_DIR=/logs
@@ -193,21 +194,40 @@ LOGS_DIR=/logs
 LOG_LEVEL=DEBUG
 
 # Authentication
-SECRET_KEY=key
+SECRET_KEY=[key]
 ```
 
 #### core/settings.py
 
+The `settings.py` file is the central configuration hub for a Django project. It defines key parameters that control how the application behaves across environments.
+
+**Core responsibilities include:**
+- **Environment setup:** Specifies `DEBUG`, `ALLOWED_HOSTS`, and environment-specific flags.
+- **App registration:** Lists installed apps via `INSTALLED_APPS`.
+- **Middleware stack:** Configures request/response processing layers in `MIDDLEWARE`.
+- **Database settings:** Defines database engine, name, credentials, and connection options.
+- **Static & media files:** Sets paths for serving static assets and user-uploaded content.
+- **Authentication & security:** Manages password validators, session settings, and secret keys.
+- **Internationalization:** Controls language, timezone, and localization behavior.
+
 ##### Add Imports
 
 ```python
-# loads values from .env files instead of hardcoding them
+# loads values from `.env` files instead of hardcoding them
 from decouple import config
 ```
 
 ##### Secret Key
 
-Instead of keeping the `SECRET_KEY` hard coded by Django in `core/settings.py`, move it to the `.env` file and retrieve it using `config()`.
+> ℹ️ Generate with `django.core.management.utils.get_random_secret_key()` for strong entropy.
+
+The `SECRET_KEY` is a critical setting in Django’s `settings.py` file used for cryptographic signing. It ensures the integrity and security of:
+- Session cookies
+- Password reset tokens
+- CSRF protection
+- Any data signed by Django’s internal mechanisms
+
+❗ Instead of keeping the `SECRET_KEY` hard coded by Django on project setup, move it to the `.env` file and retrieve it using `config()`.
 
 ```python
 SECRET_KEY = config('SECRET_KEY')
@@ -223,7 +243,7 @@ ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')
 
 ##### Installed Apps
 
-Activate the Django app and its third-party integrations, by listing them in the `INSTALLED_APPS` dictionary of `core/settings.py`.
+Activate the Django app and its third-party integrations, by listing them in the `INSTALLED_APPS` dictionary.
 
 ```python
 INSTALLED_APPS = [
@@ -250,7 +270,7 @@ ROOT_URLCONF = "core.urls"
 
 ##### Database
 
-Connects Django to a PostgreSQL database, with a custom schema search path for multi-schema querying -- ideal for projects with domain-separated schemas or shared databases across teams.
+Connects Django to a PostgreSQL database, with a custom schema search path for multi-schema querying.
 
 > ℹ️ The `search_path` option allows Django to query across multiple PostgreSQL schemas (people, production, sales, public) without schema-qualified table names.
 
@@ -278,6 +298,14 @@ The `LOGGING` dictionary configures logging across the API.
 - **Captures logs across environments** with granular control over verbosity and destinations.
 - **Separates concerns** by routing debug, info, and error messages to dedicated log files.
 - **Keeps the console clean** during development, thanks to smart filtering with `require_debug_true`.
+
+```python
+# define the `ROOT_DIR` constant
+from pathlib import Path
+from decouple import config
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+```
 
 ```python
 
@@ -372,7 +400,7 @@ REST_FRAMEWORK = {
 
 `SWAGGER_SETTINGS` customizes how `drf-yasg` presents authentication in auto-generated Swagger UI.
 
-- Adds JWT support to Swagger UI: Enables users to authorize requests using a Bearer token.
+- Adds JWT support to Swagger UI: Enables users to authorize requests using a *Bearer* token.
 - Disables session-based auth: Prevents Swagger from prompting for login credentials via Django sessions.
 - Improves developer experience: Makes it easy to test secured endpoints directly from the Swagger interface.
 
@@ -393,11 +421,14 @@ SWAGGER_SETTINGS = {
 
 ###### REDOC_SETTINGS
 
-`REDOC_SETTINGS` customizes how ReDoc renders OpenAPI documentation in the browser.
+`REDOC_SETTINGS` customizes how **ReDoc** renders OpenAPI documentation in the browser.
 
 ```python
 REDOC_SETTINGS = {
    'LAZY_RENDERING': False,
+   'HIDE_HOSTNAME': False,
+   'EXPAND_RESPONSES': 'all',
+   'PATH_IN_MIDDLE': False,
 }
 ```
 
@@ -417,7 +448,9 @@ DRF_YASG_SETTINGS = {
 
 ##### drf_standardized_errors
 
-To activate centralized error handling across your the API, plug `drf_standardized_errors` into the `REST_FRAMEWORK` dictionary in `core/settings.py`..
+> ℹ️ Create consistent, clean error messaging across the API. Just head over to `config/swagger.py` and define a custom `error_responses` dictionary. This allows centralized error formats—so contributors don’t have to reinvent the wheel for every view. Once the dictionary is set, simply reference it in views and viewsets to keep the Swagger docs sharp, readable, and standardized.
+
+To activate centralized error handling across the API, plug `drf_standardized_errors` into the `REST_FRAMEWORK` dictionary.
 
 This hands off all API exceptions to `drf_standardized_errors`, ensuring consistent, structured responses for every error—perfect for debugging, client-side handling, and contributor clarity.
 
