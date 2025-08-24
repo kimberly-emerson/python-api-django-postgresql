@@ -6,7 +6,7 @@
 
 <div align="center">
 
-[![Django Badge](https://img.shields.io/badge/django-5.2.5-4?logo=django&style=flat-square&labelColor=%23092E20&color=white)](https://www.djangoproject.com/) [![Django REST Framework Badge](https://img.shields.io/badge/django--rest--framework-3.16.1-blue?style=flat-square&labelColor=black&logo=django&logoColor=white&color=white)](https://www.django-rest-framework.org/) [![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html) [![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/) [![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)
+[![Django Badge](https://img.shields.io/badge/django-5.2.5-4?logo=django&style=flat-square&labelColor=%23092E20&color=white)](https://www.djangoproject.com/) [![Django REST Framework Badge](https://img.shields.io/badge/django--rest--framework-3.16.1-blue?style=flat-square&labelColor=black&logo=django&logoColor=white&color=white)](https://www.django-rest-framework.org/) [![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html) [![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/) [![pytest](https://img.shields.io/badge/pytest-8.4.1-white?style=flat-square&logo=pytest&logoColor=white&label=darkslategrey)](https://docs.pytest.org/en/stable.html) [![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)
 </div>
 
 ## Overview
@@ -44,7 +44,7 @@ Whether you're building dashboards, running analytics, or integrating with other
 |Database|[![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/)|
 |Authentication|[![{} JWT](https://img.shields.io/badge/%7B%7D%20Simple%20JWT-Auth-white?style=flat-square&labelColor=2ea44f&color=ffffff&logoColor=white)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)|
 |Error Handling|![DRF Standardized Errors](https://img.shields.io/badge/drf--standardized--errors-0.15.0-white?style=flat-square)|
-|Testing||
+|Testing|[![pytest](https://img.shields.io/badge/pytest-8.4.1-white?style=flat-square&logo=pytest&logoColor=white&label=darkslategrey)](https://docs.pytest.org/en/stable.html)|
 |Documentation|[![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html)|
 |Dependency Management|[![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)|
 |Environment|[![DotEnv Badge](https://img.shields.io/badge/16.0.1-0?label=dotenv&style=flat-square&logo=dotenv&labelColor=black&logoColor=white&color=white)](https://pypi.org/project/python-dotenv/)|
@@ -138,6 +138,7 @@ Let’s take the freshly scaffolded Django + PostgreSQL project and turn it into
    gh repo edit --add-topic drf-yasg
    gh repo edit --add-topic drf-standardized-errors
    gh repo edit --add-topic postgresql
+   gh repo edit --add-topic pytest
    gh repo edit --add-topic jwt-auth
    gh repo edit --add-topic pdm
    ```
@@ -159,6 +160,7 @@ gh repo edit --add-topic django-rest-framework
 gh repo edit --add-topic drf-yasg
 gh repo edit --add-topic drf-standardized-errors
 gh repo edit --add-topic postgresql
+gh repo edit --add-topic pytest
 gh repo edit --add-topic jwt-auth
 gh repo edit --add-topic pdm
 ```
@@ -203,6 +205,9 @@ This package list equips the Django REST Framework API project with everything n
 | `django-cors-headers`           | Handles Cross-Origin Resource Sharing (CORS) for Django APIs.              |
 | `django-filter`                 | Adds dynamic filtering support to DRF views and querysets.                 |
 | `python-decouple`               | Separates settings from code using environment variables and `.env` files. |
+| `pytest`        | Core testing framework for Python            | 
+| `pytest-django` | Django plugin for `pytest`|
+
 
 ```powershell
 pdm add djangorestframework
@@ -214,6 +219,8 @@ pdm add python-dotenv
 pdm add django-cors-headers
 pdm add django-filter
 pdm add python-decouple
+pdm add pytest
+pdm add pytest-django
 ```
 
 ### Create Super User
