@@ -134,7 +134,10 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
                 "method": "GET"
             },
 
-            # GET: list, POST: create
+            # GET: list
+            # POST: create
+            # OPTIONS
+            # HEAD
             "list": {
                 "href": reverse("list", request=request),
                 "method": "GET"
@@ -143,8 +146,18 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
                 "href": reverse("list", request=request),
                 "method": "POST"
             },
+            "options": {
+                "href": reverse("list", request=request),
+                "method": "OPTIONS"
+            },
+            "head": {
+                "href": reverse("list", request=request),
+                "method": "HEAD"
+            },
 
-            # Item-level operations (PUT, PATCH, DELETE)
+            # PUT: update
+            # PATCH: partial_update
+            # DELETE: destroy
             "update": {
                 "href": reverse("retrieve",
                                 args=[obj.address_type_id],
@@ -162,18 +175,5 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
                                 args=[obj.address_type_id],
                                 request=request),
                 "method": "DELETE"
-            },
-
-            # OPTIONS
-            "options": {
-                "href": reverse("options",
-                                request=request),
-                "method": "OPTIONS"
-            },
-
-            # HEAD
-            "head": {
-                "href": reverse("head"),
-                "method": "HEAD"
             },
         }

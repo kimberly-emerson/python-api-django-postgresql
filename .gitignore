@@ -1,6 +1,5 @@
 # Project files
 logs/
-tests/
 api/migrations
 
 # Byte-compiled / optimized / DLL files

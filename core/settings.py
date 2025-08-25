@@ -57,6 +57,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
+APPEND_SLASH = False
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -88,11 +90,45 @@ DATABASES = {
         'HOST': config('DB_HOSTNAME'),
         'PORT': config('DB_PORT'),
         "OPTIONS": {
-            "options": "-c search_path=people,production,sales,public"
+            "options": "-c search_path=admin,people,production,sales,public"
         },
+        'ATOMIC_REQUESTS': False,
+        'AUTOCOMMIT': True,
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': False,
+        'TIME_ZONE': None,
+        'TEST': {
+          'CHARSET': None,
+          'COLLATION': None,
+          'MIGRATE': True,
+          'MIRROR': None,
+          'NAME': None
+        }
+    },
+    'test': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('TEST_DB_NAME'),
+        'USER': config('TEST_DB_USERNAME'),
+        'PASSWORD': config('TEST_DB_PASSWORD'),
+        'HOST': config('TEST_DB_HOSTNAME'),
+        'PORT': config('TEST_DB_PORT'),
+        "OPTIONS": {
+            "options": "-c search_path=admin,people,production,sales,public"
+        },
+        'ATOMIC_REQUESTS': False,
+        'AUTOCOMMIT': True,
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': False,
+        'TIME_ZONE': None,
+        'TEST': {
+          'CHARSET': None,
+          'COLLATION': None,
+          'MIGRATE': True,
+          'MIRROR': "default",
+          'NAME': None
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -171,7 +207,7 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': False,
     "DEFAULT_AUTO_SCHEMA_CLASS": "api.config.swagger.TaggedAutoSchema",
-
+    "SWAGGER_USE_COMPAT_RENDERERS": False,
 }
 
 REDOC_SETTINGS = {
