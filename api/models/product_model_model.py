@@ -1,24 +1,24 @@
 """
 tba
 """
-
 import uuid
 from django.db import models
 
 
-class AddressType(models.Model):
+class ProductModel(models.Model):
     """
     tba
     """
 
-    address_type_id = models.BigAutoField(
+    product_model_id = models.BigAutoField(
         primary_key=True
     )
     name = models.CharField(
-        max_length=50,
-        unique=True,
-        help_text="Enter an address type."
+        max_length=255,
+        unique=True
     )
+    catalog_description = models.TextField()
+    instructions = models.TextField()
     rowguid = models.UUIDField(
         default=uuid.uuid4,
         editable=False
@@ -34,13 +34,9 @@ class AddressType(models.Model):
         """
         tba
         """
-
-        db_table = "address_types"
+        db_table = "product_models"
         managed = False
-        verbose_name = "Address Type"
-        verbose_name_plural = "Address Types"
-        ordering = ["address_type_id"]
+        verbose_name = "Product Model"
+        verbose_name_plural = "Product Models"
+        ordering = ["product_model_id"]
         get_latest_by = "modified_date"
-        indexes = [
-            models.Index(fields=["name"], name="name_idx"),
-        ]
