@@ -1,34 +1,13 @@
 """
-Swagger/OpenAPI Schema Configuration for Django REST Framework
-
-This module sets up the auto-generated API documentation using `drf_yasg`,
-providing a public Swagger UI and schema endpoint for the Django project.
-
-Components:
-- `schema_view`: Configured via `get_schema_view()` to expose OpenAPI metadata
-  including title, version, description, contact, and license. Accessible via
-  URL routing (e.g., `/swagger/` or `/redoc/`).
-- `TaggedAutoSchema`: Custom schema inspector that overrides tag generation
-  logic. If a view defines `swagger_tags`, they are used; otherwise, it falls
-  back to default tag inference.
-
-Usage:
-- Include `schema_view.with_ui('swagger')` or `schema_view.with_ui('redoc')`
-  in your `urls.py` to expose interactive documentation.
-- Extend `TaggedAutoSchema` in your views or viewsets to customize tag behavior
-  for grouped documentation.
-
-Dependencies:
-- Django REST Framework
-- drf_yasg
+tba
 """
 
+from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from drf_yasg.inspectors import SwaggerAutoSchema
-from rest_framework import permissions
 
-from api.schemas.api_error_serializer import ApiErrorSerializer
+from api.admin.serializers.api_error_serializer import ApiErrorSerializer
 
 
 schema_view = get_schema_view(  # pylint: disable=invalid-name

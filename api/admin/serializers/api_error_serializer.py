@@ -2,7 +2,7 @@
 """
 
 from rest_framework import serializers
-from api.models.api_error_model import ApiError
+from api.admin.models.api_error_model import ApiError
 
 
 class ApiErrorSerializer(serializers.ModelSerializer):

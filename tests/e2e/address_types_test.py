@@ -7,26 +7,35 @@ import pytest
 from rest_framework.reverse import reverse
 from faker import Faker
 from model_bakery import baker
-from api.models.address_type_model import AddressType
+from decouple import config
 
-pytestmark = [pytest.mark.django_db, pytest.mark.api]
+from api.people.models.address_type_model import AddressType
+
+DB = config("TEST_DB_PROFILE")
 
 
 class TestAddressTypeEndpoints():
     """
     tba
     """
-    endpoint = "/api/address-types"
+    pytestmark = [
+                    pytest.mark.django_db(
+                        databases=[f"{DB}"],
+                        transaction=True
+                    ),
+                    pytest.mark.e2e
+                 ]
 
-    @pytest.mark.django_db(databases=["default"], transaction=True)
     def test_list(self, auth_client):
         """
         tba
         """
-        baker.make(AddressType, _quantity=3, _using="default")
+        # baker.make(AddressType, _quantity=3, _using="default")
+        baker.make(AddressType, _quantity=3)
 
-        # Call the list endpoint
+        # get the list endpoint
         url = reverse("list")
+        # test the list endpoint
         response = auth_client.get(
             url,
             HTTP_ACCEPT='application/json'
@@ -50,8 +59,9 @@ class TestAddressTypeEndpoints():
         faker = Faker()
         name = faker.name()
 
-        # Call the create endpoint
-        url = "/api/address-types"
+        # get the create endpoint
+        url = reverse("create")
+        # test the create endpoint
         response = auth_client.post(
             url,
             HTTP_ACCEPT='application/json',
@@ -76,11 +86,12 @@ class TestAddressTypeEndpoints():
             address_type_id=instance.address_type_id
         )
 
-        # Call the retrieve endpoint
+        # get the retrieve endpoint
         url = reverse(
             "retrieve",
             kwargs={"address_type_id": instance.address_type_id}
         )
+        # test the retrieve endpoint
         response = auth_client.get(
             url,
             HTTP_ACCEPT='application/json'
@@ -100,12 +111,12 @@ class TestAddressTypeEndpoints():
         instance = baker.make(AddressType)
         update = baker.prepare(AddressType)
 
-        # item = {
-        #     'name': update.name
-        # }
-
-        url = f"/api/address-types/{instance.address_type_id}"
-
+        # get the update endpoint
+        url = reverse(
+            "update",
+            kwargs={"address_type_id": instance.address_type_id}
+        )
+        # test the update endpoint
         response = auth_client.put(
             url,
             data={
@@ -127,8 +138,12 @@ class TestAddressTypeEndpoints():
             'name': faker.name(),
         }
 
-        url = f'/api/address-types/{instance.address_type_id}'
-
+        # get the partial_update endpoint
+        url = reverse(
+            "partial_update",
+            kwargs={"address_type_id": instance.address_type_id}
+        )
+        # test the partial_update endpoint
         response = auth_client.patch(
             url,
             data={
@@ -146,9 +161,13 @@ class TestAddressTypeEndpoints():
         """
         instance = baker.make(AddressType)
 
-        url = f'/api/address-types/{instance.address_type_id}'
-
-        response = auth_client.delete(
+        # get the destroy endpoint
+        url = reverse(
+            "destroy",
+            kwargs={"address_type_id": instance.address_type_id}
+        )
+        # test the destroy endpoint
+        response = auth_client.get(
             url
         )
 

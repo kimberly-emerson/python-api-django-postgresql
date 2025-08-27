@@ -5,7 +5,7 @@ tba
 from django.contrib.auth.models import User
 from rest_framework import permissions, viewsets
 
-from api.schemas.user_serializer import UserSerializer
+from api.admin.serializers.user_serializer import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

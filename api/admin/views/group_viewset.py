@@ -5,7 +5,7 @@ tba
 from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
 
-from api.schemas.group_serializer import GroupSerializer
+from api.admin.serializers.group_serializer import GroupSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):

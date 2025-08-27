@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     "drf_standardized_errors",
     # project apps
     "api",
+    "api.people",
+    "api.production",
+    "api.sales"
 ]
 
 MIDDLEWARE = [
@@ -129,6 +132,9 @@ DATABASES = {
         }
     }
 }
+
+# Custom User module
+# AUTH_USER_MODEL = 'api.admin.models.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

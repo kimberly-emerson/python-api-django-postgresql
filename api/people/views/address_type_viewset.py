@@ -1,57 +1,5 @@
 """
-AddressType API ViewSet Module
-==============================
-
-This module defines the `AddressTypeViewSet`, a Django REST Framework (DRF)
-`ModelViewSet` that provides a complete CRUD API for managing
-`AddressType` records (e.g., Billing, Shipping). It integrates authentication,
-permission checks, Swagger/OpenAPI documentation, and standardized error
-handling.
-
-Key Features:
--------------
-- **Authentication & Permissions**: Requires JWT Bearer authentication
-  (`IsAuthenticated`).
-- **CRUD Operations**:
-  - `list`: Retrieve all address types with total count.
-  - `retrieve`: Get a single address type by its `address_type_id`.
-  - `create`: Add a new address type (ignores client-supplied ID).
-  - `update`: Fully replace an existing address type (excluding ID).
-  - `partial_update`: Update only provided fields of an existing record.
-  - `destroy`: Delete an address type by ID (admin-only).
-- **Metadata Endpoints**:
-  - `options`: Provides discovery information about allowed methods
-    and request formats.
-  - `head`: Returns headers only, including supported methods and
-    total count of records.
-- **Swagger/OpenAPI Integration**:
-  - Automatically generates request/response schemas, parameter
-    definitions, and error responses for API documentation.
-- **Error Handling**:
-  - Uses `drf_standardized_errors` for consistent exception responses.
-- **Logging**:
-  - Logs successful CRUD operations for auditability.
-
-Dependencies:
--------------
-- Django REST Framework
-- drf-yasg (Swagger/OpenAPI schema generation)
-- drf-standardized-errors
-- Project-specific `AddressType` model and serializer
-
-Usage:
-------
-Register this viewset in your `urls.py` using DRF’s router system to expose
-the endpoints. Example:
-
-    from rest_framework.routers import DefaultRouter
-    from api.views.address_type_viewset import AddressTypeViewSet
-
-    router = DefaultRouter()
-    router.register(r'address-types', AddressTypeViewSet,
-        basename='addresstype')
-
-    urlpatterns = router.urls
+tba
 """
 
 import logging
@@ -64,58 +12,17 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from api.config.swagger import error_responses
 
-from api.schemas.address_type_serializer import AddressTypeSerializer
-from api.models.address_type_model import AddressType
+from api.people.serializers.address_type_serializer import (
+    AddressTypeSerializer
+)
+from api.people.models.address_type_model import AddressType
 
 logger = logging.getLogger(__name__)
 
 
 class AddressTypeViewSet(viewsets.ModelViewSet):
     """
-    class AddressTypeViewSet(viewsets.ModelViewSet):
-
-    ViewSet for managing AddressType records.
-
-    This class provides a full CRUD interface for the `AddressType` model,
-    with built-in authentication, permission enforcement, logging, and
-    OpenAPI/Swagger documentation support.
-
-    Features
-    --------
-    - **Authentication**: Requires JWT Bearer authentication
-        (`IsAuthenticated`).
-    - **CRUD Endpoints**:
-        * `list`: Retrieve all AddressType records with total count.
-        * `retrieve`: Get a single AddressType by its `address_type_id`.
-        * `create`: Create a new AddressType (ignores client-supplied ID).
-        * `update`: Fully replace an existing record (ID excluded).
-        * `partial_update`: Modify only specified fields of a record.
-        * `destroy`: Delete an AddressType (admin-only).
-    - **Metadata Endpoints**:
-        * `options`: Returns supported HTTP methods and request formats.
-        * `head`: Returns metadata headers (no response body).
-    - **Swagger/OpenAPI Integration**:
-        * Auto-generated request/response documentation.
-        * Detailed error responses integrated via `drf_standardized_errors`.
-    - **Logging**:
-        * Logs all successful operations for auditing.
-
-    Attributes
-    ----------
-    queryset : QuerySet
-        The default set of `AddressType` objects.
-    serializer_class : Serializer
-        Defines how `AddressType` objects are serialized/deserialized.
-    lookup_field : str
-        Field used for lookup (primary key: `address_type_id`).
-    permission_classes : list
-        Permissions required (default: `IsAuthenticated`).
-    http_method_names : list
-        Allowed HTTP methods for the endpoint.
-    swagger_tags : list
-        Tags used for Swagger UI grouping.
-    responses : dict
-        Standardized API response schemas.
+    tba
     """
     queryset = AddressType.objects.all()  # pylint: disable=no-member
     serializer_class = AddressTypeSerializer
@@ -142,26 +49,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         """
-        Retrieve all AddressType records.
-
-        Returns a paginated list of all AddressType objects including the
-        total count and serialized data.
-
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object (must include valid authentication).
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Additional keyword arguments.
-
-        Returns
-        -------
-        Response
-            JSON response containing:
-            - `count`: total number of address types
-            - `data`: list of serialized AddressType records
+        tba
         """
         # gets the queryset
         queryset = self.get_queryset()
