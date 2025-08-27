@@ -1,6 +1,7 @@
 # python-api-django-postgresql
 
-![GitHub Tag](https://img.shields.io/github/v/tag/kimberly-emerson/python-api-django-postgresql?include_prereleases&style=flat-square&logo=github&labelColor=black&color=white) [![pytest-cov](https://img.shields.io/badge/pytest--cov-97%%20passing-white?logo=pytest&logoColor=white&color=white)](https://pytest-cov.readthedocs.io/en/latest/)
+![GitHub Tag](https://img.shields.io/github/v/tag/kimberly-emerson/python-api-django-postgresql?include_prereleases&style=flat-square&logo=github&labelColor=black&color=white) 
+<!-- [![pytest-cov](https://img.shields.io/badge/pytest--cov-97%%20passing-white?logo=pytest&logoColor=white&color=white)](https://pytest-cov.readthedocs.io/en/latest/) -->
 
 ---
 
