@@ -14,6 +14,9 @@ from decouple import config
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = config('APP_DEBUG')
+LOG_LEVEL = config('LOG_LEVEL')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -22,7 +25,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,59 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USERNAME'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOSTNAME'),
-        'PORT': config('DB_PORT'),
-        "OPTIONS": {
-            "options": "-c search_path=admin,people,production,sales,public"
-        },
-        'ATOMIC_REQUESTS': False,
-        'AUTOCOMMIT': True,
-        'CONN_MAX_AGE': 0,
-        'CONN_HEALTH_CHECKS': False,
-        'TIME_ZONE': None,
-        'TEST': {
-          'CHARSET': None,
-          'COLLATION': None,
-          'MIGRATE': True,
-          'MIRROR': None,
-          'NAME': None
-        }
-    },
-    'test': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('TEST_DB_NAME'),
-        'USER': config('TEST_DB_USERNAME'),
-        'PASSWORD': config('TEST_DB_PASSWORD'),
-        'HOST': config('TEST_DB_HOSTNAME'),
-        'PORT': config('TEST_DB_PORT'),
-        "OPTIONS": {
-            "options": "-c search_path=admin,people,production,sales,public"
-        },
-        'ATOMIC_REQUESTS': False,
-        'AUTOCOMMIT': True,
-        'CONN_MAX_AGE': 0,
-        'CONN_HEALTH_CHECKS': False,
-        'TIME_ZONE': None,
-        'TEST': {
-          'CHARSET': None,
-          'COLLATION': None,
-          'MIGRATE': True,
-          'MIRROR': "default",
-          'NAME': None
-        }
-    }
-}
 
 # Custom User module
 # AUTH_USER_MODEL = 'api.admin.models.User'
