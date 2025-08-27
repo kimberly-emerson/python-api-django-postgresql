@@ -11,28 +11,26 @@ from decouple import config
 
 from api.people.models.address_type_model import AddressType
 
-DB = config("TEST_DB_PROFILE")
+DB_ALIAS = f"{config('TEST_DB_PROFILE')}"
+
+pytestmark = [
+                pytest.mark.django_db(
+                    databases=[f"{DB_ALIAS}"],
+                    transaction=True),
+                pytest.mark.e2e
+             ]
 
 
 class TestAddressTypeEndpoints():
     """
     tba
     """
-    pytestmark = [
-                    pytest.mark.django_db(
-                        databases=[f"{DB}"],
-                        transaction=True
-                    ),
-                    pytest.mark.e2e
-                 ]
-
     def test_list(self, auth_client):
         """
         tba
         """
         # baker.make(AddressType, _quantity=3, _using="default")
         baker.make(AddressType, _quantity=3)
-
         # get the list endpoint
         url = reverse("list")
         # test the list endpoint
@@ -60,7 +58,7 @@ class TestAddressTypeEndpoints():
         name = faker.name()
 
         # get the create endpoint
-        url = reverse("create")
+        url = reverse("list")
         # test the create endpoint
         response = auth_client.post(
             url,
@@ -113,7 +111,7 @@ class TestAddressTypeEndpoints():
 
         # get the update endpoint
         url = reverse(
-            "update",
+            "retrieve",
             kwargs={"address_type_id": instance.address_type_id}
         )
         # test the update endpoint
@@ -140,7 +138,7 @@ class TestAddressTypeEndpoints():
 
         # get the partial_update endpoint
         url = reverse(
-            "partial_update",
+            "retrieve",
             kwargs={"address_type_id": instance.address_type_id}
         )
         # test the partial_update endpoint
@@ -163,12 +161,46 @@ class TestAddressTypeEndpoints():
 
         # get the destroy endpoint
         url = reverse(
-            "destroy",
+            "retrieve",
             kwargs={"address_type_id": instance.address_type_id}
         )
         # test the destroy endpoint
-        response = auth_client.get(
-            url
+        response = auth_client.delete(
+            url,
+            HTTP_ACCEPT='application/json'
         )
 
         assert response.status_code == 204
+
+    def test_options(self, auth_client):
+        """
+        tba
+        """
+        # get the destroy endpoint
+        url = reverse(
+            "list"
+        )
+        # test the destroy endpoint
+        response = auth_client.options(
+            url,
+            HTTP_ACCEPT='application/json'
+        )
+
+        assert response.status_code == 200
+
+
+    def test_head(self, auth_client):
+        """
+        tba
+        """
+        # get the destroy endpoint
+        url = reverse(
+            "list"
+        )
+        # test the destroy endpoint
+        response = auth_client.head(
+            url,
+            HTTP_ACCEPT='application/json'
+        )
+
+        assert response.status_code == 200
