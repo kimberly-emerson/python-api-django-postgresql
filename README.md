@@ -1,13 +1,15 @@
 # python-api-django-postgresql
 
-![GitHub Tag](https://img.shields.io/github/v/tag/kimberly-emerson/python-api-django-postgresql?include_prereleases&style=flat-square&logo=github&labelColor=black&color=%2300c950)
+![GitHub Tag](https://img.shields.io/github/v/tag/kimberly-emerson/python-api-django-postgresql?include_prereleases&style=flat-square&logo=github&labelColor=black&color=white) 
+
+<!-- [![pytest-cov](https://img.shields.io/badge/pytest--cov-96%%20passing-blue?logo=pytest&logoColor=white&color=white)](https://pytest-cov.readthedocs.io/en/latest/) -->
 
 ---
 
 <div align="center">
 
 [![Python Badge](https://img.shields.io/badge/python-3.13.7-3670A0?style=flat-square&labelColor=blue&logo=python&logoColor=white&color=white)](https://www.python.org/) [![Django Badge](https://img.shields.io/badge/django-5.2.5-4?logo=django&style=flat-square&labelColor=%23092E20&color=white)](https://www.djangoproject.com/) [![Django REST Framework Badge](https://img.shields.io/badge/django--rest--framework-3.16.1-blue?style=flat-square&labelColor=black&logo=django&logoColor=white&color=white)](https://www.django-rest-framework.org/) <br />
-[![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html) [![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/) [![pytest](https://img.shields.io/badge/pytest-8.4.1-white?style=flat-square&logo=pytest&logoColor=white&label=pytest)](https://docs.pytest.org/en/stable.html) [![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)
+[![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html) [![PostgreSQL Badge](https://img.shields.io/badge/PostgreSQL-3.17-316192?logo=postgresql&labelColor=blue&color=white&logoColor=white)](https://www.postgresql.org/) [![pytest](https://img.shields.io/badge/pytest-8.4.1-white?style=flat-square&logo=pytest&logoColor=white&label=pytest)](https://docs.pytest.org/en/stable.html) [![pytest-cov](https://img.shields.io/badge/pytest--cov-6.2.1-blue?logo=pytest&logoColor=white&color=white)](https://pytest-cov.readthedocs.io/en/latest/) [![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)
 </div>
 
 ## Overview
@@ -23,6 +25,7 @@ This repository showcases a modular, production-ready Django REST API powered by
 - Environment-driven configuration using `.env` and `python-decouple`
 - Multi-schema **PostgreSQL** support for domain-separated data access
 - Structured Django logging with separate debug, info, and error channels
+- Unit, end-to-end, and integration testing with `pytest`
 
 ## 𝄜 Data Pipeline
 
@@ -46,6 +49,7 @@ Whether you're building dashboards, running analytics, or integrating with other
 |Authentication|[![{} JWT](https://img.shields.io/badge/%7B%7D%20Simple%20JWT-Auth-white?style=flat-square&labelColor=2ea44f&color=ffffff&logoColor=white)](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)|
 |Error Handling|![DRF Standardized Errors](https://img.shields.io/badge/drf--standardized--errors-0.15.0-white?style=flat-square)|
 |Testing|[![pytest](https://img.shields.io/badge/pytest-8.4.1-white?style=flat-square&logo=pytest&logoColor=white&label=pytest)](https://docs.pytest.org/en/stable.html)|
+|Coverage|[![pytest-cov](https://img.shields.io/badge/pytest--cov-6.2.1-blue?logo=pytest&logoColor=white&color=white)](https://pytest-cov.readthedocs.io/en/latest/)|
 |Documentation|[![Swagger Badge](https://img.shields.io/badge/Swagger-Docs-%23Clojure?style=flat-square&logo=swagger&labelColor=7FFF00&color=white&logoColor=black)](https://drf-yasg.readthedocs.io/en/stable/readme.html)|
 |Dependency Management|[![PDM](https://img.shields.io/badge/PDM-2.25.5-white?labelColor=mediumpurple&logo=pdm&logoColor=white)](https://pdm.fming.dev)|
 |Environment|[![DotEnv Badge](https://img.shields.io/badge/16.0.1-0?label=dotenv&style=flat-square&logo=dotenv&labelColor=black&logoColor=white&color=white)](https://pypi.org/project/python-dotenv/)|
@@ -248,17 +252,26 @@ python manage.py createsuperuser --username [username] --email [email]
 
 ```powershell
 md api/config
-md api/models
-md api/schemas
-md api/views
 md api/utils
+md api/admin/models
+md api/admin/serializers
+md api/admin/views
+md api/people/models
+md api/people/serializers
+md api/people/views
+md api/production/models
+md api/production/serializers
+md api/production/views
+md api/sales/models
+md api/sales/serializers
+md api/sales/views
 ```
 
 #### Files
 
 ℹ️ `db.sqlite3` is removed because the file is created on initialization and the project uses PostgreSQL instead.  
 
-ℹ️ `/api` Python files are removed because the project structure contains folder and modular models, schemas, views, etc.
+ℹ️ `/api` Python files are removed because the project structure contains folder and modular domain models, schemas, views, etc.
 
 ```powershell
 ri db.sqlite3
@@ -268,13 +281,13 @@ ri api/apps.py
 ri api/models.py
 ri api/tests.py
 ri api/views.py
-ni api/router.py
 ni api/config/swagger.py
+ni api/admin/serializers/group_serializer.py
+ni api/admin/serializers/user_serializer.py
+ni api/admin/views/group_viewset.py
+ni api/admin/views/user_viewset.py
+ni api/router.py
 ni api/urls.py
-ni api/schemas/group_serializer.py
-ni api/schemas/user_serializer.py
-ni api/views/group_viewset.py
-ni api/views/user_viewset.py
 ni logs
 ni tests
 ni .env
@@ -314,7 +327,8 @@ LOGS_DIR=/logs
 LOG_LEVEL=DEBUG
 
 # Authentication
-SECRET_KEY=[key]
+ALLOWED_HOSTS=hosts
+SECRET_KEY=key
 ```
 
 #### core/settings.py
@@ -375,6 +389,10 @@ INSTALLED_APPS = [
     "drf_standardized_errors",
     # project apps
     "api",
+    "api.admin",
+    "api.people",
+    "api.production",
+    "api.sales"
 ]
 ```
 
@@ -405,8 +423,43 @@ DATABASES = {
         'HOST': config('DB_HOSTNAME'),
         'PORT': config('DB_PORT'),
         "OPTIONS": {
-            "options": "-c search_path=people,production,sales,public"
+            "options": "-c search_path=admin,people,production,sales,public"
         },
+        'ATOMIC_REQUESTS': False,
+        'AUTOCOMMIT': True,
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': False,
+        'TIME_ZONE': None,
+        'TEST': {
+          'CHARSET': None,
+          'COLLATION': None,
+          'MIGRATE': True,
+          'MIRROR': None,
+          'NAME': None
+        }
+    },
+    'test': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('TEST_DB_NAME'),
+        'USER': config('TEST_DB_USERNAME'),
+        'PASSWORD': config('TEST_DB_PASSWORD'),
+        'HOST': config('TEST_DB_HOSTNAME'),
+        'PORT': config('TEST_DB_PORT'),
+        "OPTIONS": {
+            "options": "-c search_path=admin,people,production,sales,public"
+        },
+        'ATOMIC_REQUESTS': False,
+        'AUTOCOMMIT': True,
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': False,
+        'TIME_ZONE': None,
+        'TEST': {
+          'CHARSET': None,
+          'COLLATION': None,
+          'MIGRATE': True,
+          'MIRROR': "default",
+          'NAME': None
+        }
     }
 }
 ```
@@ -512,7 +565,20 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
     ),
+    'DEFAULT_PAGINATION_CLASS':
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '60/min',
+        'user': '5000/day'
+    },
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler"
 }
 ```
 
@@ -536,6 +602,8 @@ SWAGGER_SETTINGS = {
 
     },
     'USE_SESSION_AUTH': False,
+    "DEFAULT_AUTO_SCHEMA_CLASS": "api.config.swagger.TaggedAutoSchema",
+    "SWAGGER_USE_COMPAT_RENDERERS": False,
 }
 ```
 
