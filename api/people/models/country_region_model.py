@@ -14,7 +14,6 @@ Dependencies:
 - django.db.models: for ORM model definitions
 - django.db.models.functions: for case-insensitive constraints
 """
-import uuid
 from django.db import models
 
 
@@ -49,13 +48,9 @@ class CountryRegion(models.Model):
         primary_key=True
     )
     name = models.CharField(
-        max_length=3,
+        max_length=255,
         unique=True,
         help_text="Enter a country region code."
-    )
-    rowguid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False
     )
     modified_date = models.DateTimeField(
         auto_now=True

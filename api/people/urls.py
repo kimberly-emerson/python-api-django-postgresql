@@ -3,7 +3,10 @@ tba
 """
 
 from django.urls import path
+
 from api.people.views.address_type_viewset import AddressTypeViewSet
+from api.people.views.country_region_viewset import CountryRegionViewSet
+
 
 urlpatterns = [
      # AddressType
@@ -26,4 +29,23 @@ urlpatterns = [
         name="retrieve",
         ),
 
+     # CountryRegion
+     path(
+        "/country-regions",
+        CountryRegionViewSet.as_view({
+            "get": "list",
+            "post": "create",
+        }),
+        name="list",
+        ),
+     path(
+        "/country-regions/<str:country_region_code>",
+        CountryRegionViewSet.as_view({
+            "get": "retrieve",
+            "patch": "partial_update",
+            "put": "update",
+            "delete": "destroy",
+        }),
+        name="retrieve",
+        ),
 ]
