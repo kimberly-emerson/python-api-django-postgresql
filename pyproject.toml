@@ -31,8 +31,8 @@ license = {text = "MIT"}
 distribution = false
 
 [tool.pdm.scripts]
-adminuser = "python manage.py createsuperuser --settings=core.settings_dev"
+adminuser = "python manage.py createsuperuser --settings=core.settings_test"
 makemigrations = "python manage.py makemigrations"
-migrate = "python manage.py migrate --settings=core.settings_dev"
-start = "python manage.py runserver --settings=core.settings_dev"
+migrate = "python manage.py migrate --settings=core.settings_test"
+start = "python manage.py runserver --settings=core.settings_test"
 post_init = { composite = ["pdm install", "adminuser", "makemigrations", "migrate", "start"] }

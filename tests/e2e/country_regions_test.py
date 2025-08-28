@@ -9,8 +9,8 @@ from faker import Faker
 from model_bakery import baker
 from decouple import config
 
-from api.people.models.address_type_model import AddressType
-from api.utils.values_handler import get_unique_name
+from api.people.models.country_region_model import CountryRegion
+from api.utils.values_handler import get_unique_name, get_unique_country_code
 
 
 DB_ALIAS = f"{config('TEST_DB_PROFILE')}"
@@ -23,24 +23,24 @@ pytestmark = [
              ]
 
 
-class TestAddressTypeEndpoints:
+class TestCountryRegionEndpoints:
     """
     tba
     """
     # pylint: disable=no-member
 
-    def test_address_type_list(self, auth_client):
+    def test_country_region_list(self, auth_client):
         """
         tba
         """
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         # if no object exists, create some
         if not data:
-            list(self.create_address_types(3))
+            list(self.create_country_regions(3))
 
         # get the list endpoint
-        url = reverse("address-types")
+        url = reverse("country-regions")
 
         # test returning list of objects
         response = auth_client.get(
@@ -53,26 +53,28 @@ class TestAddressTypeEndpoints:
         assert response.headers["Content-Type"] == "application/json"
         assert isinstance(response.data, dict)
 
-    def test_address_type_create(self, auth_client):
+    def test_country_region_create(self, auth_client):
         """
         tba
         """
         # get existing objects and their unique values
         # pylint: disable=no-member
-        data = AddressType.objects.all()
-
+        data = CountryRegion.objects.all()
+        codes = data.values_list('country_region_code', flat=True)
         names = data.values_list('name', flat=True)
 
         # set unique values to be created
+        code = get_unique_country_code(codes, 100)
         name = get_unique_name(names, 100)
 
         # create object
         instance = {
+            'country_region_code': code,
             'name': name
         }
 
         # get the create endpoint
-        url = reverse("address-types")
+        url = reverse("country-regions")
         print("URL: ", url)
 
         # test the create endpoint
@@ -80,6 +82,7 @@ class TestAddressTypeEndpoints:
             url,
             HTTP_ACCEPT='application/json',
             data={
+                'country_region_code': instance['country_region_code'],
                 'name': instance['name']
             },
             format='json'
@@ -90,32 +93,32 @@ class TestAddressTypeEndpoints:
         assert response.headers["Content-Type"] == "application/json"
         assert isinstance(response.data, dict)
 
-    def test_address_type_retrieve(self, auth_client):
+    def test_country_region_retrieve(self, auth_client):
         """
         tba
         """
         # test if an object exists
         # pylint: disable=no-member
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         instance = {}
         if not data:
             # if no objects exist, create one
-            instance = self.create_address_types(1)
+            instance = self.create_country_regions(1)
         else:
             # otherwise, add existing object to dictionary
-            instance['address_type_id'] = data.address_type_id
+            instance['country_region_code'] = data.country_region_code
             instance['name'] = data.name
 
         # query created object
-        query = AddressType.objects.get(  # pylint: disable=no-member
-            address_type_id=instance['address_type_id']
+        query = CountryRegion.objects.get(  # pylint: disable=no-member
+            country_region_code=instance['country_region_code']
         )
 
         # get the retrieve endpoint
         url = reverse(
-            "address-types-id",
-            kwargs={"address_type_id": instance['address_type_id']}
+            "country-regions-code",
+            kwargs={"country_region_code": instance['country_region_code']}
         )
         # test the retrieve endpoint
         response = auth_client.get(
@@ -127,25 +130,25 @@ class TestAddressTypeEndpoints:
         assert response.status_code == 200
         assert response.headers["Content-Type"] == "application/json"
         assert isinstance(response.data, dict)
-        assert instance['address_type_id'] == query.address_type_id
+        assert instance['country_region_code'] == query.country_region_code
         assert instance['name'] == query.name
 
-    def test_address_type_update(self, auth_client):
+    def test_country_region_update(self, auth_client):
         """
         tba
         """
         faker = Faker()
         # get last existing object
         # pylint: disable=no-member
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         instance = {}
         if not data:
             # if no objects exist, create one
-            instance = self.create_address_types(1)
+            instance = self.create_country_regions(1)
         else:
             # otherwise, add existing object to dictionary
-            instance['address_type_id'] = data.address_type_id
+            instance['country_region_code'] = data.country_region_code
             instance['name'] = data.name
 
         # update instance
@@ -153,14 +156,14 @@ class TestAddressTypeEndpoints:
 
         # get the update endpoint
         url = reverse(
-            "address-types-id",
-            kwargs={"address_type_id": instance['address_type_id']}
+            "country-regions-code",
+            kwargs={"country_region_code": instance['country_region_code']}
         )
         # test the update endpoint
         response = auth_client.put(
             url,
             data={
-                'address_type_id': instance['address_type_id'],
+                'country_region_code': instance['country_region_code'],
                 'name': instance['name']
             },
             format='json'
@@ -169,22 +172,22 @@ class TestAddressTypeEndpoints:
         assert response.status_code == 200
         assert isinstance(response.data, dict)
 
-    def test_address_type_partial_update(self, auth_client):
+    def test_country_region_partial_update(self, auth_client):
         """
         tba
         """
         faker = Faker()
         # get last existing object
         # pylint: disable=no-member
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         instance = {}
         if not data:
             # if no objects exist, create one
-            instance = self.create_address_types(1)
+            instance = self.create_country_regions(1)
         else:
             # otherwise, add existing object to dictionary
-            instance['address_type_id'] = data.address_type_id
+            instance['country_region_code'] = data.country_region_code
             instance['name'] = data.name
 
         # update instance
@@ -192,8 +195,8 @@ class TestAddressTypeEndpoints:
 
         # get the update endpoint
         url = reverse(
-            "address-types-id",
-            kwargs={"address_type_id": instance['address_type_id']}
+            "country-regions-code",
+            kwargs={"country_region_code": instance['country_region_code']}
         )
         # test the update endpoint
         response = auth_client.patch(
@@ -207,28 +210,28 @@ class TestAddressTypeEndpoints:
         assert response.status_code == 200
         assert isinstance(response.data, dict)
 
-    def test_address_type_delete(self, auth_client):
+    def test_country_region_delete(self, auth_client):
         """
         tba
         """
         faker = Faker()
         # pylint: disable=no-member
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         instance = []
         if not data:
-            address_type = {
-                'address_type_id': faker.random_int(),
+            country_region = {
+                'country_region_code': faker.random_int(),
                 'name': faker.word()
             }
-            instance = baker.make(AddressType, **address_type)
+            instance = baker.make(CountryRegion, **country_region)
         else:
             instance = data
 
         # get the update endpoint
         url = reverse(
-            "address-types-id",
-            kwargs={"address_type_id": instance.address_type_id}
+            "country-regions-code",
+            kwargs={"country_region_code": instance.country_region_code}
         )
         # test the delete endpoint
         response = auth_client.delete(
@@ -237,12 +240,12 @@ class TestAddressTypeEndpoints:
 
         assert response.status_code == 204
 
-    def test_address_type_options(self, auth_client):
+    def test_country_region_options(self, auth_client):
         """
         tba
         """
         # get the destroy endpoint
-        url = reverse("address-types")
+        url = reverse("country-regions")
 
         # test the destroy endpoint
         response = auth_client.options(
@@ -252,12 +255,12 @@ class TestAddressTypeEndpoints:
 
         assert response.status_code == 200
 
-    def test_address_type_head(self, auth_client):
+    def test_country_region_head(self, auth_client):
         """
         tba
         """
         # get the destroy endpoint
-        url = reverse("address-types")
+        url = reverse("country-regions")
 
         # test the destroy endpoint
         response = auth_client.head(
@@ -267,7 +270,7 @@ class TestAddressTypeEndpoints:
 
         assert response.status_code == 200
 
-    def create_address_types(self, num: int) -> dict:
+    def create_country_regions(self, num: int) -> dict:
         """
         tba
         """
@@ -275,17 +278,17 @@ class TestAddressTypeEndpoints:
 
         # get list of objects
         # pylint: disable=no-member
-        data = AddressType.objects.all().last()
+        data = CountryRegion.objects.all().last()
 
         items = {}
         if not data:
             # create n objects
             for _ in range(num):
-                address_type = {
+                country_region = {
                     'name': faker.word()
                 }
                 # create address type object
-                instance = baker.make(AddressType, **address_type)
+                instance = baker.make(CountryRegion, **country_region)
 
                 # update list of objects
                 items.update(instance)

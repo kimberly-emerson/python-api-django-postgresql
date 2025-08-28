@@ -61,12 +61,12 @@ class CountryRegionSerializer(HATEOASMixin, serializers.ModelSerializer):
         )
 
         return {
-            "next": self.get_object_url(next_obj, "retrieve", request),
-            "previous": self.get_object_url(previous_obj, "retrieve", request),
+            "next": self.get_object_url(next_obj, "country-regions-code", request),
+            "previous": self.get_object_url(previous_obj, "country-regions-code", request),
 
             # GET: retrieve
             "self": {
-                "href": reverse("retrieve",
+                "href": reverse("country-regions-code",
                                 args=[obj.country_region_code],
                                 request=request),
                 "method": "GET"
@@ -77,19 +77,19 @@ class CountryRegionSerializer(HATEOASMixin, serializers.ModelSerializer):
             # OPTIONS
             # HEAD
             "list": {
-                "href": reverse("list", request=request),
+                "href": reverse("country-regions", request=request),
                 "method": "GET"
             },
             "create": {
-                "href": reverse("list", request=request),
+                "href": reverse("country-regions", request=request),
                 "method": "POST"
             },
             "options": {
-                "href": reverse("list", request=request),
+                "href": reverse("country-regions", request=request),
                 "method": "OPTIONS"
             },
             "head": {
-                "href": reverse("list", request=request),
+                "href": reverse("country-regions", request=request),
                 "method": "HEAD"
             },
 
@@ -97,19 +97,19 @@ class CountryRegionSerializer(HATEOASMixin, serializers.ModelSerializer):
             # PATCH: partial_update
             # DELETE: destroy
             "update": {
-                "href": reverse("retrieve",
+                "href": reverse("country-regions-code",
                                 args=[obj.country_region_code],
                                 request=request),
                 "method": "PUT"
             },
             "partial_update": {
-                "href": reverse("retrieve",
+                "href": reverse("country-regions-code",
                                 args=[obj.country_region_code],
                                 request=request),
                 "method": "PATCH"
             },
             "destroy": {
-                "href": reverse("retrieve",
+                "href": reverse("country-regions-code",
                                 args=[obj.country_region_code],
                                 request=request),
                 "method": "DELETE"

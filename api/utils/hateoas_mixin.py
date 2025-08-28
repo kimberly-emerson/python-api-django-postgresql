@@ -7,7 +7,8 @@ class HATEOASMixin:
     """
     Adds HATEOAS links to serializer output.
     """
-    def get_links(self, obj):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+    def get_links(self, obj):
         """
         Override this in subclasses to define links.
         """

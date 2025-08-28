@@ -16,7 +16,7 @@ urlpatterns = [
             "get": "list",
             "post": "create",
         }),
-        name="list",
+        name="address-types",
         ),
      path(
         "/address-types/<int:address_type_id>",
@@ -26,7 +26,7 @@ urlpatterns = [
             "put": "update",
             "delete": "destroy",
         }),
-        name="retrieve",
+        name="address-types-id",
         ),
 
      # CountryRegion
@@ -36,7 +36,7 @@ urlpatterns = [
             "get": "list",
             "post": "create",
         }),
-        name="list",
+        name="country-regions",
         ),
      path(
         "/country-regions/<str:country_region_code>",
@@ -46,6 +46,6 @@ urlpatterns = [
             "put": "update",
             "delete": "destroy",
         }),
-        name="retrieve",
+        name="country-regions-code",
         ),
 ]

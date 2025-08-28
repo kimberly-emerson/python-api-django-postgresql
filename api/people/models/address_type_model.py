@@ -27,9 +27,6 @@ class AddressType(models.Model):
         auto_now=True
     )
 
-    def __str__(self):
-        return f"{self.name}"
-
     class Meta:
         """
         tba
@@ -41,6 +38,3 @@ class AddressType(models.Model):
         verbose_name_plural = "Address Types"
         ordering = ["address_type_id"]
         get_latest_by = "modified_date"
-        indexes = [
-            models.Index(fields=["name"], name="name_idx"),
-        ]
