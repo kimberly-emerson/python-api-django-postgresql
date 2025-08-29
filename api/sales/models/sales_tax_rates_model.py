@@ -4,7 +4,7 @@ tba
 import uuid
 from django.db import models
 
-from api.models.state_province_model import StateProvince
+from api.people.models.state_province_model import StateProvince
 
 
 class SalesTaxRates(models.Model):

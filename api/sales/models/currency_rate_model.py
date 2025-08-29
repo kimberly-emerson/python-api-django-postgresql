@@ -3,7 +3,7 @@ tba
 """
 from django.db import models
 
-from api.models.currency_model import Currency
+from api.sales.models.currency_model import Currency
 
 
 class CurrencyRate(models.Model):

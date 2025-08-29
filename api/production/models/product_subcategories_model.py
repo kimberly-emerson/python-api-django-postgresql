@@ -4,7 +4,7 @@ tba
 import uuid
 from django.db import models
 
-from api.models.product_category_model import ProductCategory
+from api.production.models.product_category_model import ProductCategory
 
 
 class ProductSubcategory(models.Model):

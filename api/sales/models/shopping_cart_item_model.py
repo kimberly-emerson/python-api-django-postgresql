@@ -3,7 +3,7 @@ tba
 """
 from django.db import models
 
-from api.models.product_model import Product
+from api.production.models.product_model import Product
 
 
 class ShoppingCartItem(models.Model):

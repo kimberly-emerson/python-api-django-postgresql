@@ -4,13 +4,13 @@ tba
 import uuid
 from django.db import models
 
-from api.models.customer_model import Customer
-from api.models.address_model import Address
-from api.models.ship_method_model import ShipMethod
-from api.models.sales_people_model import SalesPeople
-from api.models.sales_territory_model import SalesTerritory
-from api.models.credit_card_model import CreditCard
-from api.models.currency_rate_model import CurrencyRate
+from api.people.models.address_model import Address
+from api.sales.models.customer_model import Customer
+from api.sales.models.ship_method_model import ShipMethod
+from api.sales.models.sales_people_model import SalesPeople
+from api.sales.models.sales_territory_model import SalesTerritory
+from api.sales.models.credit_card_model import CreditCard
+from api.sales.models.currency_rate_model import CurrencyRate
 
 
 class SalesOrderHeader(models.Model):

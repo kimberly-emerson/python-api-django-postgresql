@@ -3,8 +3,8 @@ tba
 """
 from django.db import models
 
-from api.models.country_region_model import CountryRegion
-from api.models.currency_model import Currency
+from api.people.models.country_region_model import CountryRegion
+from api.sales.models.currency_model import Currency
 
 
 class CountryRegionCurrency(models.Model):

@@ -4,9 +4,9 @@ tba
 import uuid
 from django.db import models
 
-from api.models.people_model import People
-from api.models.sales_territory_model import SalesTerritory
-from api.models.store_model import Store
+from api.people.models.people_model import People
+from api.sales.models.sales_territory_model import SalesTerritory
+from api.sales.models.store_model import Store
 
 
 class Customer(models.Model):

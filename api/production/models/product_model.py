@@ -4,9 +4,11 @@ tba
 import uuid
 from django.db import models
 
-from api.models.unit_measures_model import UnitMeasure
-from api.models.product_subcategories_model import ProductSubcategory
-from api.models.product_model_model import ProductModel
+from api.production.models.unit_measures_model import UnitMeasure
+from api.production.models.product_subcategories_model import (
+  ProductSubcategory
+)
+from api.production.models.product_model_model import ProductModel
 
 
 class Product(models.Model):

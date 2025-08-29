@@ -4,7 +4,7 @@ tba
 import uuid
 from django.db import models
 
-from api.models.country_region_model import CountryRegion
+from api.people.models.country_region_model import CountryRegion
 
 
 class SalesTerritory(models.Model):
@@ -24,6 +24,7 @@ class SalesTerritory(models.Model):
         CountryRegion,
         related_name='sales_territories',
         verbose_name='Country Region',
+        db_column='country_region_code',
         on_delete=models.CASCADE
     )
     region = models.CharField(

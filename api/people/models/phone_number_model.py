@@ -4,10 +4,9 @@
 
 
 from django.db import models
-from django.db.models import UniqueConstraint
 
-from api.models.people_model import People
-from api.models.phone_number_type_model import PhoneNumberType
+from api.people.models.people_model import People
+from api.people.models.phone_number_type_model import PhoneNumberType
 
 
 class PhoneNumber(models.Model):

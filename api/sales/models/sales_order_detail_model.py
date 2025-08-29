@@ -4,9 +4,9 @@ tba
 import uuid
 from django.db import models
 
-from api.models.sales_order_header_model import SalesOrderHeader
-from api.models.product_model import Product
-from api.models.special_offer_model import SpecialOffer
+from api.production.models.product_model import Product
+from api.sales.models.sales_order_header_model import SalesOrderHeader
+from api.sales.models.special_offer_model import SpecialOffer
 
 
 class SalesOrderDetail(models.Model):

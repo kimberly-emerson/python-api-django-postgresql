@@ -3,8 +3,8 @@ tba
 """
 from django.db import models
 
-from api.models.sales_order_header_model import SalesOrderHeader
-from api.models.sales_reason_model import SalesReason
+from api.sales.models.sales_order_header_model import SalesOrderHeader
+from api.sales.models.sales_reason_model import SalesReason
 
 
 class SalesOrderHeaderSalesReason(models.Model):

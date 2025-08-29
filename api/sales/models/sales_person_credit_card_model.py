@@ -4,8 +4,8 @@ tba
 
 from django.db import models
 
-from api.models.sales_people_model import SalesPeople
-from api.models.credit_card_model import CreditCard
+from api.sales.models.sales_people_model import SalesPeople
+from api.sales.models.credit_card_model import CreditCard
 
 
 class SalesPersonCreditCard(models.Model):

@@ -5,7 +5,7 @@ tba
 import uuid
 from django.db import models
 
-from api.models.sales_people_model import SalesPeople
+from api.sales.models.sales_people_model import SalesPeople
 
 
 class SalesPeopleQuotaHistory(models.Model):
