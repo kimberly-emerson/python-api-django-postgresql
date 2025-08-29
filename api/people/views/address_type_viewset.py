@@ -12,10 +12,10 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from api.config.swagger import error_responses
 
+from api.people.models.address_type_model import AddressType
 from api.people.serializers.address_type_serializer import (
     AddressTypeSerializer
 )
-from api.people.models.address_type_model import AddressType
 
 logger = logging.getLogger(__name__)
 
@@ -24,12 +24,13 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
     """
     tba
     """
-    queryset = AddressType.objects.all()  # pylint: disable=no-member
+    # pylint: disable=no-member
+    queryset = AddressType.objects.all()
     serializer_class = AddressTypeSerializer
     lookup_field = 'address_type_id'
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'put',
-                         'patch', 'delete', 'head', 'options']
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete',
+                         'head', 'options']
     swagger_tags = ['Addresses']
 
     success_response = {
@@ -51,6 +52,9 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         """
         tba
         """
+
+        logging.info("GET request received for %s", request)
+
         # gets the queryset
         queryset = self.get_queryset()
 
@@ -59,7 +63,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
 
         # serialize data
         serializer = self.get_serializer(queryset, many=True)
-        logging.info("SUCCESS: retrieved list -- %s", serializer.data)
 
         return Response({
             'count': queryset.count(),
@@ -104,6 +107,9 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             - `count`: always 1
             - `data`: serialized AddressType record
         """
+
+        logging.info("GET request received for %s", request)
+
         # get AddressType instance
         instance = get_object_or_404(
             AddressType,
@@ -114,7 +120,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
 
         # serialize data
         serializer = self.get_serializer(instance)
-        logging.info("SUCCESS: retrieved record -- %s", serializer.data)
 
         return Response({
             'count': 1,
@@ -158,6 +163,9 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             JSON response containing the newly created AddressType data
             and HTTP status 201 Created.
         """
+
+        logging.info("POST request received for %s", request)
+
         # check permissions: object can be accessed by the user
         self.check_object_permissions(self.request, request.data)
 
@@ -165,7 +173,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        logging.info("SUCCESS: created -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -209,6 +216,9 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             JSON response containing updated AddressType data and
             HTTP status 200 OK.
         """
+
+        logging.info("PUT request received for %s", request)
+
         instance = get_object_or_404(
             AddressType,
             address_type_id=kwargs['address_type_id'])
@@ -224,8 +234,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        logging.info("SUCCESS: updated -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -269,6 +277,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             JSON response containing updated AddressType data and
             HTTP status 200 OK.
         """
+        logging.info("PATCH request received for %s", request)
 
         instance = get_object_or_404(
             AddressType,
@@ -281,8 +290,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
                                          partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        logging.info("SUCCESS: updated -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -326,6 +333,8 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         Response
             Empty response with HTTP status 204 No Content.
         """
+        logging.info("DELETE request received for %s", request)
+
         instance = get_object_or_404(
             AddressType,
             address_type_id=kwargs['address_type_id'])
@@ -333,8 +342,6 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, instance)
 
         instance.delete()
-
-        logging.info("SUCCESS: Address Type deleted -- %s", instance.name)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -374,6 +381,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             - `description`: description of AddressType resource
             - `allowed_methods`: list of supported HTTP methods
         """
+        logging.info("OPTIONS request received for %s", request)
 
         data = {
             "name": "Address Types",
@@ -436,7 +444,7 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
         responses=responses,
         security=[{'Bearer': []}]
     )
-    def head(self):  # pylint: disable=method-hidden
+    def head(self, request):  # pylint: disable=method-hidden
         """
         Retrieve metadata headers for the AddressType endpoint.
 
@@ -452,6 +460,8 @@ class AddressTypeViewSet(viewsets.ModelViewSet):
             - `Allow`: supported methods
             - `X-Total-Count`: total number of address types
         """
+        logging.info("HEAD request received for %s", request)
+
         total_count = self.get_queryset().count()
         headers = {
             'Accept': 'application/json',

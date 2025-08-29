@@ -12,10 +12,10 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from api.config.swagger import error_responses
 
+from api.people.models.country_region_model import CountryRegion
 from api.people.serializers.country_region_serializer import (
     CountryRegionSerializer
 )
-from api.people.models.country_region_model import CountryRegion
 
 logger = logging.getLogger(__name__)
 
@@ -24,12 +24,13 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
     """
     tba
     """
-    queryset = CountryRegion.objects.all()  # pylint: disable=no-member
+    # pylint: disable=no-member
+    queryset = CountryRegion.objects.all()
     serializer_class = CountryRegionSerializer
     lookup_field = 'country_region_code'
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'put',
-                         'patch', 'delete', 'head', 'options']
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete',
+                         'head', 'options']
     swagger_tags = ['Addresses']
 
     success_response = {
@@ -44,13 +45,16 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         operation_description="Retrieve a list of all CountryRegion records,"
         "including total count and serialized details.",
         operation_id="list",
-        operation_summary="Get all country regions",
+        operation_summary="Get all address types",
         responses=responses,
     )
     def list(self, request, *args, **kwargs):
         """
         tba
         """
+
+        logging.info("GET request received for %s", request)
+
         # gets the queryset
         queryset = self.get_queryset()
 
@@ -59,7 +63,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
 
         # serialize data
         serializer = self.get_serializer(queryset, many=True)
-        logging.info("SUCCESS: retrieved list -- %s", serializer.data)
 
         return Response({
             'count': queryset.count(),
@@ -78,13 +81,35 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         operation_description="Fetch a single CountryRegion record by its"
         "unique ID. Returns serialized data.",
         operation_id="retrieve",
-        operation_summary="Get an country region",
+        operation_summary="Get an address type",
         responses=responses
     )
     def retrieve(self, request, *args, **kwargs):
         """
-        tba
+        Retrieve a single CountryRegion record by ID.
+
+        Fetches a specific CountryRegion instance identified by
+        `country_region_code`.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Must include `country_region_code`.
+
+        Returns
+        -------
+        Response
+            JSON response containing:
+            - `count`: always 1
+            - `data`: serialized CountryRegion record
         """
+
+        logging.info("GET request received for %s", request)
+
         # get CountryRegion instance
         instance = get_object_or_404(
             CountryRegion,
@@ -95,7 +120,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
 
         # serialize data
         serializer = self.get_serializer(instance)
-        logging.info("SUCCESS: retrieved record -- %s", serializer.data)
 
         return Response({
             'count': 1,
@@ -114,14 +138,34 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         operation_description="Create a new CountryRegion record."
         "Client-supplied ID fields are ignored.",
         operation_id="create",
-        operation_summary="Create an country region",
+        operation_summary="Create an address type",
         request_body=CountryRegionSerializer,
         responses=responses
     )
     def create(self, request, *args, **kwargs) -> CountryRegion:
         """
-        tba
+        Create a new CountryRegion record.
+
+        Ignores any client-supplied `country_region_code` and generates a new one.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object containing CountryRegion data.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        Response
+            JSON response containing the newly created CountryRegion data
+            and HTTP status 201 Created.
         """
+
+        logging.info("POST request received for %s", request)
+
         # check permissions: object can be accessed by the user
         self.check_object_permissions(self.request, request.data)
 
@@ -129,7 +173,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        logging.info("SUCCESS: created -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -147,14 +190,35 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         operation_description="Fully replace an existing CountryRegion"
         "record. All fields except ID are overwritten.",
         operation_id="update",
-        operation_summary="Update an country region",
+        operation_summary="Update an address type",
         request_body=CountryRegionSerializer,
         responses=responses
     )
     def update(self, request, *args, **kwargs) -> CountryRegion:
         """
-        tba
+        Fully update an existing CountryRegion record.
+
+        Replaces all fields of an CountryRegion instance except the primary key
+        (`country_region_code`).
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object containing updated CountryRegion data.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Must include `country_region_code`.
+
+        Returns
+        -------
+        Response
+            JSON response containing updated CountryRegion data and
+            HTTP status 200 OK.
         """
+
+        logging.info("PUT request received for %s", request)
+
         instance = get_object_or_404(
             CountryRegion,
             country_region_code=kwargs['country_region_code'])
@@ -170,8 +234,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        logging.info("SUCCESS: updated -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -189,14 +251,33 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         operation_id="partial_update",
         operation_description="Apply partial updates to an CountryRegion"
         "record. Only specified fields are modified. ID field is excluded.",
-        operation_summary="Partially update an country region",
+        operation_summary="Partially update an address type",
         request_body=CountryRegionSerializer,
         responses=responses
     )
     def partial_update(self, request, *args, **kwargs) -> CountryRegion:
         """
-        tba
+        Partially update an CountryRegion record.
+
+        Updates only the fields included in the request payload. The
+        primary key (`country_region_code`) cannot be modified.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object containing fields to update.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Must include `country_region_code`.
+
+        Returns
+        -------
+        Response
+            JSON response containing updated CountryRegion data and
+            HTTP status 200 OK.
         """
+        logging.info("PATCH request received for %s", request)
 
         instance = get_object_or_404(
             CountryRegion,
@@ -209,8 +290,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
                                          partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        logging.info("SUCCESS: updated -- %s", serializer.data)
 
         return Response({
             'data': serializer.data
@@ -226,7 +305,7 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_id="destroy",
-        operation_summary="Delete an country region",
+        operation_summary="Delete an address type",
         operation_description="Delete an CountryRegion record by ID."
         "Requires admin privileges. Returns 204 No Content on success.",
         request_body=CountryRegionSerializer,
@@ -235,8 +314,27 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
     )
     def destroy(self, request, *args, **kwargs) -> Response:
         """
-        tba
+        Delete an CountryRegion record by ID.
+
+        Removes the specified CountryRegion instance. Requires elevated
+        (admin) privileges.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Must include `country_region_code`.
+
+        Returns
+        -------
+        Response
+            Empty response with HTTP status 204 No Content.
         """
+        logging.info("DELETE request received for %s", request)
+
         instance = get_object_or_404(
             CountryRegion,
             country_region_code=kwargs['country_region_code'])
@@ -244,8 +342,6 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, instance)
 
         instance.delete()
-
-        logging.info("SUCCESS: country region deleted -- %s", instance.name)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -263,11 +359,32 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
     )
     def options(self, request, *args, **kwargs):
         """
-        tba
+        Retrieve metadata for CountryRegion endpoints.
+
+        Provides information on available HTTP methods, request formats,
+        and a description of the resource.
+
+        Parameters
+        ----------
+        request : Request
+            The HTTP request object.
+        *args : tuple
+            Additional positional arguments.
+        **kwargs : dict
+            Additional keyword arguments.
+
+        Returns
+        -------
+        Response
+            JSON response containing:
+            - `name`: resource name
+            - `description`: description of CountryRegion resource
+            - `allowed_methods`: list of supported HTTP methods
         """
+        logging.info("OPTIONS request received for %s", request)
 
         data = {
-            "name": "country regions",
+            "name": "Address Types",
             "description": "Admin-only CRUD interface for managing address"
                            "type metadata (e.g., Billing, Shipping, etc.)",
             "allowed_methods": ["GET", "POST", "PUT",
@@ -297,7 +414,7 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
                             ),
                             'X-Total-Count': openapi.Schema(
                                 type=openapi.TYPE_INTEGER,
-                                description='Total number of country regions'
+                                description='Total number of address types'
                                 'available'
                             )
                         }
@@ -308,11 +425,11 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
 
     @swagger_auto_schema(
         operation_id="head",
-        operation_summary="Retrieve metadata headers for country regions",
+        operation_summary="Retrieve metadata headers for address types",
         operation_description=(
             "Returns HTTP headers without a response body. Useful for checking"
             "resource availability, supported methods, and total count of"
-            "country regions. Requires admin authentication via Bearer token."
+            "address types. Requires admin authentication via Bearer token."
         ),
         manual_parameters=[
             openapi.Parameter(
@@ -327,10 +444,24 @@ class CountryRegionViewSet(viewsets.ModelViewSet):
         responses=responses,
         security=[{'Bearer': []}]
     )
-    def head(self):  # pylint: disable=method-hidden
+    def head(self, request):  # pylint: disable=method-hidden
         """
-        tba
+        Retrieve metadata headers for the CountryRegion endpoint.
+
+        Returns only HTTP headers without a response body. Useful for
+        checking resource availability, supported methods, and total count.
+
+        Returns
+        -------
+        Response
+            Response with headers:
+            - `Content-Type`: response content type
+            - `Authorization`: required auth header
+            - `Allow`: supported methods
+            - `X-Total-Count`: total number of address types
         """
+        logging.info("HEAD request received for %s", request)
+
         total_count = self.get_queryset().count()
         headers = {
             'Accept': 'application/json',
