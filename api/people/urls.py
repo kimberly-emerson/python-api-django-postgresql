@@ -6,6 +6,7 @@ from django.urls import path
 
 from api.people.views.address_type_viewset import AddressTypeViewSet
 from api.people.views.country_region_viewset import CountryRegionViewSet
+from api.people.views.state_province_viewset import StateProvinceViewSet
 
 
 urlpatterns = [
@@ -15,6 +16,8 @@ urlpatterns = [
         AddressTypeViewSet.as_view({
             "get": "list",
             "post": "create",
+            "options": "options",
+            "head": "head"
         }),
         name="address-types",
         ),
@@ -35,6 +38,8 @@ urlpatterns = [
         CountryRegionViewSet.as_view({
             "get": "list",
             "post": "create",
+            "options": "options",
+            "head": "head"
         }),
         name="country-regions",
         ),
@@ -47,5 +52,26 @@ urlpatterns = [
             "delete": "destroy",
         }),
         name="country-regions-code",
+        ),
+     # StateProvince
+     path(
+        "/state-provinces",
+        StateProvinceViewSet.as_view({
+            "get": "list",
+            "post": "create",
+            "options": "options",
+            "head": "head"
+        }),
+        name="state-provinces",
+        ),
+     path(
+        "/state-provinces/<int:address_type_id>",
+        StateProvinceViewSet.as_view({
+            "get": "retrieve",
+            "patch": "partial_update",
+            "put": "update",
+            "delete": "destroy",
+        }),
+        name="state-provinces-id",
         ),
 ]
