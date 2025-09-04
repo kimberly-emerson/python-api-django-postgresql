@@ -3,16 +3,15 @@ tba
 """
 
 from rest_framework import serializers
-from rest_framework.reverse import reverse
+
 from api.people.models.country_region_model import CountryRegion
-from api.utils.hateoas_mixin import HATEOASMixin
+from api.utils.hateoas_serializer import HATEOASLinkSerializer
 
 
-class CountryRegionSerializer(HATEOASMixin, serializers.ModelSerializer):
+class CountryRegionSerializer(serializers.ModelSerializer):
     """
     tba
     """
-    model = CountryRegion
 
     class Meta:
         """
@@ -25,93 +24,19 @@ class CountryRegionSerializer(HATEOASMixin, serializers.ModelSerializer):
             'modified_date',
         ]
 
-    def get_object_url(self, obj, view_name: str, request):
-        """
-        Returns the reverse URL for a given object and view name, or None
-        if the object is None.
-        """
-        if obj:
-            return reverse(
-                view_name,
-                args=[obj.country_region_code],
-                request=request)
-        else:
-            return None
 
-    def get_links(self, obj):
-        """
-        tba
-        """
-        request = self.context.get("request")
+class CountryRegionListResponseSerializer(serializers.Serializer):
+    """
+    tba
+    """
+    count = serializers.IntegerField()
+    links = HATEOASLinkSerializer(many=True)
+    data = CountryRegionSerializer(many=True)
 
-        # Get next object
-        next_obj = (
-            CountryRegion.objects.filter(  # pylint: disable=no-member
-                country_region_code__gt=obj.country_region_code)
-            .order_by("country_region_code")
-            .first()
-        )
-        # Get previous object
-        previous_obj = (
-            CountryRegion.objects.filter(  # pylint: disable=no-member
-                country_region_code__lt=obj.country_region_code
-            )
-            .order_by("-country_region_code")
-            .first()
-        )
 
-        return {
-            "next": self.get_object_url(next_obj, "country-regions-code", request),
-            "previous": self.get_object_url(previous_obj, "country-regions-code", request),
-
-            # GET: retrieve
-            "self": {
-                "href": reverse("country-regions-code",
-                                args=[obj.country_region_code],
-                                request=request),
-                "method": "GET"
-            },
-
-            # GET: list
-            # POST: create
-            # OPTIONS
-            # HEAD
-            "list": {
-                "href": reverse("country-regions", request=request),
-                "method": "GET"
-            },
-            "create": {
-                "href": reverse("country-regions", request=request),
-                "method": "POST"
-            },
-            "options": {
-                "href": reverse("country-regions", request=request),
-                "method": "OPTIONS"
-            },
-            "head": {
-                "href": reverse("country-regions", request=request),
-                "method": "HEAD"
-            },
-
-            # PUT: update
-            # PATCH: partial_update
-            # DELETE: destroy
-            "update": {
-                "href": reverse("country-regions-code",
-                                args=[obj.country_region_code],
-                                request=request),
-                "method": "PUT"
-            },
-            "partial_update": {
-                "href": reverse("country-regions-code",
-                                args=[obj.country_region_code],
-                                request=request),
-                "method": "PATCH"
-            },
-            "destroy": {
-                "href": reverse("country-regions-code",
-                                args=[obj.country_region_code],
-                                request=request),
-                "method": "DELETE"
-            },
-        }
+class CountryRegionDetailResponseSerializer(serializers.Serializer):
+    """
+    tba
+    """
+    links = HATEOASLinkSerializer(many=True)
+    data = CountryRegionSerializer()

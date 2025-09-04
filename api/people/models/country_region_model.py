@@ -1,20 +1,15 @@
 """
-Models for representing country or region codes in a standardized format.
+CountryRegion Model
 
-This module defines the `CountryRegion` model, which stores country or region
-identifiers used for localization, reporting, and integration with external
-systems. It enforces case-insensitive uniqueness on the primary code and
-includes metadata for tracking changes.
-
-Intended for use in systems where country codes must be validated, referenced,
-or displayed consistently across services.
-
-Dependencies:
-- uuid: for generating globally unique identifiers
-- django.db.models: for ORM model definitions
-- django.db.models.functions: for case-insensitive constraints
+tba
 """
 from django.db import models
+
+
+class CountryRegionManager(models.Manager):
+    """
+    tba
+    """
 
 
 class CountryRegion(models.Model):
@@ -55,6 +50,8 @@ class CountryRegion(models.Model):
     modified_date = models.DateTimeField(
         auto_now=True
     )
+
+    objects = CountryRegionManager()
 
     def __str__(self):
         return f"{self.name}"

@@ -6,6 +6,12 @@ import uuid
 from django.db import models
 
 
+class AddressTypeManager(models.Manager):
+    """
+    tba
+    """
+
+
 class AddressType(models.Model):
     """
     tba
@@ -26,6 +32,8 @@ class AddressType(models.Model):
     modified_date = models.DateTimeField(
         auto_now=True
     )
+
+    objects = AddressTypeManager()
 
     class Meta:
         """

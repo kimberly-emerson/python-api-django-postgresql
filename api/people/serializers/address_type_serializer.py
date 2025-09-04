@@ -3,17 +3,15 @@ tba
 """
 
 from rest_framework import serializers
-from rest_framework.reverse import reverse
+
 from api.people.models.address_type_model import AddressType
-from api.utils.hateoas_mixin import HATEOASMixin
+from api.utils.hateoas_serializer import HATEOASLinkSerializer
 
 
-class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
+class AddressTypeSerializer(serializers.ModelSerializer):
     """
     tba
     """
-    model = AddressType
-
     class Meta:
         """
         tba
@@ -27,93 +25,19 @@ class AddressTypeSerializer(HATEOASMixin, serializers.ModelSerializer):
             'modified_date',
         ]
 
-    def get_object_url(self, obj, view_name: str, request):
-        """
-        Returns the reverse URL for a given object and view name, or None
-        if the object is None.
-        """
-        if obj:
-            return reverse(
-                view_name,
-                args=[obj.address_type_id],
-                request=request)
-        else:
-            return None
 
-    def get_links(self, obj):
-        """
-        tba
-        """
-        request = self.context.get("request")
+class AddressTypeListResponseSerializer(serializers.Serializer):
+    """
+    tba
+    """
+    count = serializers.IntegerField()
+    links = HATEOASLinkSerializer(many=True)
+    data = AddressTypeSerializer(many=True)
 
-        # Get next object
-        next_obj = (
-            AddressType.objects.filter(  # pylint: disable=no-member
-                address_type_id__gt=obj.address_type_id)
-            .order_by("address_type_id")
-            .first()
-        )
-        # Get previous object
-        previous_obj = (
-            AddressType.objects.filter(  # pylint: disable=no-member
-                address_type_id__lt=obj.address_type_id
-            )
-            .order_by("-address_type_id")
-            .first()
-        )
 
-        return {
-            "next": self.get_object_url(next_obj, "address-types-id", request),
-            "previous": self.get_object_url(previous_obj, "address-types-id", request),
-
-            # GET: retrieve
-            "self": {
-                "href": reverse("address-types-id",
-                                args=[obj.address_type_id],
-                                request=request),
-                "method": "GET"
-            },
-
-            # GET: list
-            # POST: create
-            # OPTIONS
-            # HEAD
-            "list": {
-                "href": reverse("address-types", request=request),
-                "method": "GET"
-            },
-            "create": {
-                "href": reverse("address-types", request=request),
-                "method": "POST"
-            },
-            "options": {
-                "href": reverse("address-types", request=request),
-                "method": "OPTIONS"
-            },
-            "head": {
-                "href": reverse("address-types", request=request),
-                "method": "HEAD"
-            },
-
-            # PUT: update
-            # PATCH: partial_update
-            # DELETE: destroy
-            "update": {
-                "href": reverse("address-types-id",
-                                args=[obj.address_type_id],
-                                request=request),
-                "method": "PUT"
-            },
-            "partial_update": {
-                "href": reverse("address-types-id",
-                                args=[obj.address_type_id],
-                                request=request),
-                "method": "PATCH"
-            },
-            "destroy": {
-                "href": reverse("address-types-id",
-                                args=[obj.address_type_id],
-                                request=request),
-                "method": "DELETE"
-            },
-        }
+class AddressTypeDetailResponseSerializer(serializers.Serializer):
+    """
+    tba
+    """
+    links = HATEOASLinkSerializer(many=True)
+    data = AddressTypeSerializer()
