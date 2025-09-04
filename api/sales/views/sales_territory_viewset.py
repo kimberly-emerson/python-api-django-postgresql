@@ -1,9 +1,9 @@
 """
-CountryRegion API ViewSet.
+SalesTerritory API ViewSet.
 
 This module provides a Django REST Framework (DRF) implementation for managing
-`CountryRegion` resources. It supports standard CRUD operations (list, retrieve,
-create, update, partial update, and delete), integrates HATEOAS-style
+`SalesTerritory` resources. It supports standard CRUD operations (list,
+retrieve, create, update, partial update, and delete), integrates HATEOAS-style
 responses, and extends Swagger schema documentation for better API
 discoverability.
 
@@ -23,11 +23,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from api.people.models.country_region_model import CountryRegion
-from api.people.serializers.country_region_serializer import (
-    CountryRegionSerializer,
-    CountryRegionListResponseSerializer,
-    CountryRegionDetailResponseSerializer
+from api.sales.models.sales_territory_model import SalesTerritory
+from api.sales.serializers.sales_territory_serializer import (
+    SalesTerritorySerializer,
+    SalesTerritoryListResponseSerializer,
+    SalesTerritoryDetailResponseSerializer
 )
 from api.viewsets.base_hateoas_viewset import BaseHATEOASViewSet
 from api.config.build_swagger_schema import build_schema_extension
@@ -37,9 +37,9 @@ from api.utils.logging_handler import log_event
 logger = logging.getLogger(__name__)
 
 
-class CountryRegionPagination(PageNumberPagination):
+class SalesTerritoryPagination(PageNumberPagination):
     """
-    Pagination configuration for CountryRegion API endpoints.
+    Pagination configuration for SalesTerritory API endpoints.
 
     Attributes:
         - page_size (int): Default number of items per page (10).
@@ -52,9 +52,9 @@ class CountryRegionPagination(PageNumberPagination):
     max_page_size: int = 100
 
 
-class CountryRegionViewSet(BaseHATEOASViewSet):
+class SalesTerritoryViewSet(BaseHATEOASViewSet):
     """
-    ViewSet for managing CountryRegion resources.
+    ViewSet for managing SalesTerritory resources.
 
     Provides standard CRUD operations along with filtering, ordering,
     authentication, and Swagger schema integration.
@@ -66,16 +66,16 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
           - Resource ID (if applicable)
           - Response status code
     """
-    model: str = CountryRegion.__name__
+    model: str = SalesTerritory.__name__
     basename: str = 'address-types'
-    lookup_field: str = 'country_region_code'
+    lookup_field: str = 'sales_territory_id'
     # pylint: disable=no-member
-    queryset = CountryRegion.objects.all().order_by(lookup_field)
-    serializer_class = CountryRegionSerializer
+    queryset = SalesTerritory.objects.all().order_by(lookup_field)
+    serializer_class = SalesTerritorySerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head',
                          'options']
-    swagger_tags = ['Addresses']
+    swagger_tags = ['Sales']
 
     filter_backends = [filters.OrderingFilter]
     ordering_fields = [f'{lookup_field}']
@@ -84,9 +84,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='list',
-        serializer=CountryRegionListResponseSerializer,
+        serializer=SalesTerritoryListResponseSerializer,
         success_code=200,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def list(
         self,
@@ -95,7 +95,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any
     ) -> Response:
         """
-        Retrieve a paginated list of all CountryRegion resources.
+        Retrieve a paginated list of all SalesTerritory resources.
 
         Args:
             request (Request): The HTTP request instance.
@@ -108,7 +108,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         """
         log_event(
             "INFO",
-            "CountryRegion list requested",
+            "SalesTerritory list requested",
             user=str(request.user),
             method=request.method,
             path=request.get_full_path()
@@ -118,14 +118,14 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = CountryRegionSerializer(page, many=True)
+            serializer = SalesTerritorySerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
-        serializer = CountryRegionSerializer(queryset, many=True)
+        serializer = SalesTerritorySerializer(queryset, many=True)
 
         log_event(
             "INFO",
-            "CountryRegion list retrieved",
+            "SalesTerritory list retrieved",
             user=str(request.user),
             count=len(serializer.data),
             status=status.HTTP_200_OK
@@ -139,9 +139,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='retrieve',
-        serializer=CountryRegionDetailResponseSerializer,
+        serializer=SalesTerritoryDetailResponseSerializer,
         success_code=200,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def retrieve(
         self,
@@ -150,24 +150,24 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any,
     ) -> Response:
         """
-        Retrieve a single CountryRegion resource by ID.
+        Retrieve a single SalesTerritory resource by ID.
 
         Args:
             request (Request): The HTTP request instance.
 
         Returns:
-            Response: A JSON response containing the serialized CountryRegion
+            Response: A JSON response containing the serialized SalesTerritory
             data.
 
         Logging:
-            Logs the ID of the retrieved CountryRegion and request context.
+            Logs the ID of the retrieved SalesTerritory and request context.
         """
-        instance: CountryRegion = self.get_object()
+        instance: SalesTerritory = self.get_object()
         log_event(
             "INFO",
-            "CountryRegion retrieved",
+            "SalesTerritory retrieved",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             method=request.method,
             path=request.get_full_path(),
             status=status.HTTP_200_OK
@@ -179,9 +179,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='create',
-        serializer=CountryRegionListResponseSerializer,
+        serializer=SalesTerritoryListResponseSerializer,
         success_code=201,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def create(
         self,
@@ -190,7 +190,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any,
     ) -> Response:
         """
-        Create a new CountryRegion resource.
+        Create a new SalesTerritory resource.
 
         Args:
             request (Request): The HTTP request instance containing request
@@ -198,32 +198,32 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         Returns:
             Response: A JSON response containing the serialized newly created
-            CountryRegion.
+            SalesTerritory.
 
         Logging:
             Logs payload keys (not sensitive values) and the created
-            CountryRegion ID.
+            SalesTerritory ID.
         """
         log_event(
             "INFO",
-            "Create CountryRegion request received",
+            "Create SalesTerritory request received",
             user=str(request.user),
             method=request.method,
             path=request.get_full_path(),
             payload_keys=list(request.data.keys())
         )
 
-        serializer: CountryRegionSerializer = self.get_serializer(
+        serializer: SalesTerritorySerializer = self.get_serializer(
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
-        instance: CountryRegion = serializer.save()
+        instance: SalesTerritory = serializer.save()
 
         log_event(
             "INFO",
-            "CountryRegion created successfully",
+            "SalesTerritory created successfully",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             status=status.HTTP_201_CREATED
         )
 
@@ -235,9 +235,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='update',
-        serializer=CountryRegionDetailResponseSerializer,
+        serializer=SalesTerritoryDetailResponseSerializer,
         success_code=200,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def update(
         self,
@@ -246,7 +246,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any,
     ) -> Response:
         """
-        Update an existing CountryRegion resource.
+        Update an existing SalesTerritory resource.
 
         Args:
             request (Request): The HTTP request instance containing updated
@@ -254,23 +254,23 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         Returns:
             Response: A JSON response containing the updated serialized
-            CountryRegion.
+            SalesTerritory.
 
         Logging:
             Logs the ID being updated, payload keys, and outcome status.
         """
-        instance: CountryRegion = self.get_object()
+        instance: SalesTerritory = self.get_object()
         log_event(
             "INFO",
-            "Update CountryRegion request received",
+            "Update SalesTerritory request received",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             method=request.method,
             path=request.get_full_path(),
             payload_keys=list(request.data.keys())
         )
 
-        serializer: CountryRegionSerializer = self.get_serializer(
+        serializer: SalesTerritorySerializer = self.get_serializer(
             instance,
             data=request.data,
             partial=False
@@ -280,9 +280,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         log_event(
             "INFO",
-            "CountryRegion updated successfully",
+            "SalesTerritory updated successfully",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             status=status.HTTP_200_OK
         )
 
@@ -291,9 +291,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='update',
-        serializer=CountryRegionDetailResponseSerializer,
+        serializer=SalesTerritoryDetailResponseSerializer,
         success_code=200,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def partial_update(
         self,
@@ -302,7 +302,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any,
     ) -> Response:
         """
-        Partially update an existing CountryRegion resource.
+        Partially update an existing SalesTerritory resource.
 
         Args:
             request (Request): The HTTP request instance containing partial
@@ -310,23 +310,23 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         Returns:
             Response: A JSON response containing the updated serialized
-            CountryRegion.
+            SalesTerritory.
 
         Logging:
             Logs the ID being patched, payload keys, and outcome status.
         """
-        instance: CountryRegion = self.get_object()
+        instance: SalesTerritory = self.get_object()
         log_event(
             "INFO",
-            "Partial update request for CountryRegion",
+            "Partial update request for SalesTerritory",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             method=request.method,
             path=request.get_full_path(),
             payload_keys=list(request.data.keys())
         )
 
-        serializer: CountryRegionSerializer = self.get_serializer(
+        serializer: SalesTerritorySerializer = self.get_serializer(
             instance,
             data=request.data,
             partial=True
@@ -336,9 +336,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         log_event(
             "INFO",
-            "CountryRegion partially updated successfully",
+            "SalesTerritory partially updated successfully",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             status=status.HTTP_200_OK
         )
 
@@ -347,9 +347,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='destroy',
-        serializer=CountryRegionDetailResponseSerializer,
+        serializer=SalesTerritoryDetailResponseSerializer,
         success_code=204,
-        tags=['Addresses']
+        tags=['Sales']
     )
     def destroy(
         self,
@@ -358,7 +358,7 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         **kwargs: Any,
     ) -> Response:
         """
-        Delete an CountryRegion resource.
+        Delete an SalesTerritory resource.
 
         Args:
             request (Request): The HTTP request instance.
@@ -369,12 +369,12 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
         Logging:
             Logs the ID being deleted and the outcome status.
         """
-        instance: CountryRegion = self.get_object()
+        instance: SalesTerritory = self.get_object()
         log_event(
             "WARNING",
-            "Delete CountryRegion request received",
+            "Delete SalesTerritory request received",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             method=request.method,
             path=request.get_full_path()
         )
@@ -383,9 +383,9 @@ class CountryRegionViewSet(BaseHATEOASViewSet):
 
         log_event(
             "INFO",
-            "CountryRegion deleted successfully",
+            "SalesTerritory deleted successfully",
             user=str(request.user),
-            id=instance.country_region_code,
+            id=instance.sales_territory_id,
             status=status.HTTP_204_NO_CONTENT
         )
 

@@ -1,487 +1,392 @@
 """
-tba
+StateProvince API ViewSet.
+
+This module provides a Django REST Framework (DRF) implementation for managing
+`StateProvince` resources. It supports standard CRUD operations (list,
+retrieve, create, update, partial update, and delete), integrates HATEOAS-style
+responses, and extends Swagger schema documentation for better API
+discoverability.
+
+Logging:
+    All API actions log structured JSON events using `log_event`, which
+    ensures:
+      - Consistent JSON format for logs.
+      - Inclusion of request context (user, method, path, status).
+      - Exclusion of sensitive data (only metadata like payload keys logged).
 """
 
 import logging
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from typing import Any
+from rest_framework import status, filters
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_standardized_errors.handler import exception_handler
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-from api.config.swagger import error_responses
 
 from api.people.models.state_province_model import StateProvince
 from api.people.serializers.state_province_serializer import (
-    StateProvinceSerializer
+    StateProvinceSerializer,
+    StateProvinceListResponseSerializer,
+    StateProvinceDetailResponseSerializer
 )
+from api.viewsets.base_hateoas_viewset import BaseHATEOASViewSet
+from api.config.build_swagger_schema import build_schema_extension
+from api.utils.logging_handler import log_event
+
 
 logger = logging.getLogger(__name__)
 
 
-class StateProvinceViewSet(viewsets.ModelViewSet):
+class StateProvincePagination(PageNumberPagination):
     """
-    tba
+    Pagination configuration for StateProvince API endpoints.
+
+    Attributes:
+        - page_size (int): Default number of items per page (10).
+        - page_size_query_param (str): Query parameter to override the page
+        size.
+        - max_page_size (int): Maximum allowed page size (100).
     """
+    page_size: int = 10
+    page_size_query_param: str = 'page_size'
+    max_page_size: int = 100
+
+
+class StateProvinceViewSet(BaseHATEOASViewSet):
+    """
+    ViewSet for managing StateProvince resources.
+
+    Provides standard CRUD operations along with filtering, ordering,
+    authentication, and Swagger schema integration.
+
+    Logging:
+        Each method uses `log_event` to record structured JSON logs, including:
+          - User performing the action
+          - HTTP method and path
+          - Resource ID (if applicable)
+          - Response status code
+    """
+    model: str = StateProvince.__name__
+    basename: str = 'address-types'
+    lookup_field: str = 'state_province_id'
     # pylint: disable=no-member
-    queryset = StateProvince.objects.all()
+    queryset = StateProvince.objects.all().order_by(lookup_field)
     serializer_class = StateProvinceSerializer
-    lookup_field = 'state_province_id'
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete',
-                         'head', 'options']
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head',
+                         'options']
     swagger_tags = ['Addresses']
 
-    success_response = {
-        200: openapi.Response("OK: The request was successfully received,"
-                              "understood, and processed by the server.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = [f'{lookup_field}']
+    ordering = [f'{lookup_field}']
 
-    @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_description="Retrieve a list of all StateProvince records,"
-        "including total count and serialized details.",
-        operation_id="list",
-        operation_summary="Get all address types",
-        responses=responses,
+    @build_schema_extension(
+        model=model,
+        operation_id='list',
+        serializer=StateProvinceListResponseSerializer,
+        success_code=200,
+        tags=['Addresses']
     )
-    def list(self, request, *args, **kwargs):
+    def list(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any
+    ) -> Response:
         """
-        tba
+        Retrieve a paginated list of all StateProvince resources.
+
+        Args:
+            request (Request): The HTTP request instance.
+
+        Returns:
+            Response: A JSON response containing the count and serialized data.
+
+        Logging:
+            Logs request context and total count of results.
         """
+        log_event(
+            "INFO",
+            "StateProvince list requested",
+            user=str(request.user),
+            method=request.method,
+            path=request.get_full_path()
+        )
 
-        logging.info("GET request received for %s", request)
+        queryset = self.filter_queryset(self.get_queryset())
 
-        # gets the queryset
-        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = StateProvinceSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, queryset)
+        serializer = StateProvinceSerializer(queryset, many=True)
 
-        # serialize data
-        serializer = self.get_serializer(queryset, many=True)
+        log_event(
+            "INFO",
+            "StateProvince list retrieved",
+            user=str(request.user),
+            count=len(serializer.data),
+            status=status.HTTP_200_OK
+        )
 
         return Response({
-            'count': queryset.count(),
+            'count': len(serializer.data),
             'data': serializer.data
         }, status=status.HTTP_200_OK)
 
-    success_response = {
-        200: openapi.Response("OK: The request was successfully received,"
-                              "understood, and processed by the server.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
-
-    @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_description="Fetch a single StateProvince record by its"
-        "unique ID. Returns serialized data.",
-        operation_id="retrieve",
-        operation_summary="Get an address type",
-        responses=responses
+    @build_schema_extension(
+        model=model,
+        operation_id='retrieve',
+        serializer=StateProvinceDetailResponseSerializer,
+        success_code=200,
+        tags=['Addresses']
     )
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
         """
-        Retrieve a single StateProvince record by ID.
+        Retrieve a single StateProvince resource by ID.
 
-        Fetches a specific StateProvince instance identified by
-        `state_province_id`.
+        Args:
+            request (Request): The HTTP request instance.
 
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Must include `state_province_id`.
+        Returns:
+            Response: A JSON response containing the serialized StateProvince
+            data.
 
-        Returns
-        -------
-        Response
-            JSON response containing:
-            - `count`: always 1
-            - `data`: serialized StateProvince record
+        Logging:
+            Logs the ID of the retrieved StateProvince and request context.
         """
+        instance: StateProvince = self.get_object()
+        log_event(
+            "INFO",
+            "StateProvince retrieved",
+            user=str(request.user),
+            id=instance.state_province_id,
+            method=request.method,
+            path=request.get_full_path(),
+            status=status.HTTP_200_OK
+        )
 
-        logging.info("GET request received for %s", request)
-
-        # get StateProvince instance
-        instance = get_object_or_404(
-            StateProvince,
-            state_province_id=kwargs['state_province_id'])
-
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, instance)
-
-        # serialize data
         serializer = self.get_serializer(instance)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
-        return Response({
-            'count': 1,
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
-
-    success_response = {
-        201: openapi.Response("CREATED: The request was successful and"
-                              "resulted in the creation of a new resource.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
-
-    @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_description="Create a new StateProvince record."
-        "Client-supplied ID fields are ignored.",
-        operation_id="create",
-        operation_summary="Create an address type",
-        request_body=StateProvinceSerializer,
-        responses=responses
+    @build_schema_extension(
+        model=model,
+        operation_id='create',
+        serializer=StateProvinceListResponseSerializer,
+        success_code=201,
+        tags=['Addresses']
     )
-    def create(self, request, *args, **kwargs) -> StateProvince:
+    def create(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
         """
-        Create a new StateProvince record.
+        Create a new StateProvince resource.
 
-        Ignores any client-supplied `state_province_id` and generates a new one.
+        Args:
+            request (Request): The HTTP request instance containing request
+            data.
 
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object containing StateProvince data.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Additional keyword arguments.
+        Returns:
+            Response: A JSON response containing the serialized newly created
+            StateProvince.
 
-        Returns
-        -------
-        Response
-            JSON response containing the newly created StateProvince data
-            and HTTP status 201 Created.
+        Logging:
+            Logs payload keys (not sensitive values) and the created
+            StateProvince ID.
         """
+        log_event(
+            "INFO",
+            "Create StateProvince request received",
+            user=str(request.user),
+            method=request.method,
+            path=request.get_full_path(),
+            payload_keys=list(request.data.keys())
+        )
 
-        logging.info("POST request received for %s", request)
-
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, request.data)
-
-        # serialize data
-        serializer = self.get_serializer(data=request.data)
+        serializer: StateProvinceSerializer = self.get_serializer(
+            data=request.data
+        )
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        instance: StateProvince = serializer.save()
 
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_201_CREATED)
+        log_event(
+            "INFO",
+            "StateProvince created successfully",
+            user=str(request.user),
+            id=instance.state_province_id,
+            status=status.HTTP_201_CREATED
+        )
 
-    success_response = {
-        200: openapi.Response("OK: The request was successfully received,"
-                              "understood, and processed by the server.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
+        return Response(
+            {'data': serializer.data},
+            status=status.HTTP_201_CREATED
+        )
 
-    @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_description="Fully replace an existing StateProvince"
-        "record. All fields except ID are overwritten.",
-        operation_id="update",
-        operation_summary="Update an address type",
-        request_body=StateProvinceSerializer,
-        responses=responses
+    @build_schema_extension(
+        model=model,
+        operation_id='update',
+        serializer=StateProvinceDetailResponseSerializer,
+        success_code=200,
+        tags=['Addresses']
     )
-    def update(self, request, *args, **kwargs) -> StateProvince:
+    def update(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
         """
-        Fully update an existing StateProvince record.
+        Update an existing StateProvince resource.
 
-        Replaces all fields of an StateProvince instance except the primary key
-        (`state_province_id`).
+        Args:
+            request (Request): The HTTP request instance containing updated
+            data.
 
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object containing updated StateProvince data.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Must include `state_province_id`.
+        Returns:
+            Response: A JSON response containing the updated serialized
+            StateProvince.
 
-        Returns
-        -------
-        Response
-            JSON response containing updated StateProvince data and
-            HTTP status 200 OK.
+        Logging:
+            Logs the ID being updated, payload keys, and outcome status.
         """
+        instance: StateProvince = self.get_object()
+        log_event(
+            "INFO",
+            "Update StateProvince request received",
+            user=str(request.user),
+            id=instance.state_province_id,
+            method=request.method,
+            path=request.get_full_path(),
+            payload_keys=list(request.data.keys())
+        )
 
-        logging.info("PUT request received for %s", request)
-
-        instance = get_object_or_404(
-            StateProvince,
-            state_province_id=kwargs['state_province_id'])
-
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, instance)
-
-        # serialize data
-        serializer = self.get_serializer(
+        serializer: StateProvinceSerializer = self.get_serializer(
             instance,
             data=request.data,
-            partial=False)
-
+            partial=False
+        )
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+        instance = serializer.save()
 
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_200_OK)
+        log_event(
+            "INFO",
+            "StateProvince updated successfully",
+            user=str(request.user),
+            id=instance.state_province_id,
+            status=status.HTTP_200_OK
+        )
 
-    success_response = {
-        200: openapi.Response("OK: The request was successfully received,"
-                              "understood, and processed by the server.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(
-        security=[{'Bearer': []}],
-        operation_id="partial_update",
-        operation_description="Apply partial updates to an StateProvince"
-        "record. Only specified fields are modified. ID field is excluded.",
-        operation_summary="Partially update an address type",
-        request_body=StateProvinceSerializer,
-        responses=responses
+    @build_schema_extension(
+        model=model,
+        operation_id='update',
+        serializer=StateProvinceDetailResponseSerializer,
+        success_code=200,
+        tags=['Addresses']
     )
-    def partial_update(self, request, *args, **kwargs) -> StateProvince:
+    def partial_update(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
         """
-        Partially update an StateProvince record.
+        Partially update an existing StateProvince resource.
 
-        Updates only the fields included in the request payload. The
-        primary key (`state_province_id`) cannot be modified.
+        Args:
+            request (Request): The HTTP request instance containing partial
+            data.
 
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object containing fields to update.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Must include `state_province_id`.
+        Returns:
+            Response: A JSON response containing the updated serialized
+            StateProvince.
 
-        Returns
-        -------
-        Response
-            JSON response containing updated StateProvince data and
-            HTTP status 200 OK.
+        Logging:
+            Logs the ID being patched, payload keys, and outcome status.
         """
-        logging.info("PATCH request received for %s", request)
+        instance: StateProvince = self.get_object()
+        log_event(
+            "INFO",
+            "Partial update request for StateProvince",
+            user=str(request.user),
+            id=instance.state_province_id,
+            method=request.method,
+            path=request.get_full_path(),
+            payload_keys=list(request.data.keys())
+        )
 
-        instance = get_object_or_404(
-            StateProvince,
-            state_province_id=kwargs['state_province_id'])
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, instance)
-        # serialize data
-        serializer = self.get_serializer(instance,
-                                         data=request.data,
-                                         partial=True)
+        serializer: StateProvinceSerializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=True
+        )
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
+        instance = serializer.save()
 
-        return Response({
-            'data': serializer.data
-            }, status=status.HTTP_200_OK)
+        log_event(
+            "INFO",
+            "StateProvince partially updated successfully",
+            user=str(request.user),
+            id=instance.state_province_id,
+            status=status.HTTP_200_OK
+        )
 
-    success_response = {
-        204: openapi.Response("NO CONTENT: The server successfully processed"
-                              "the request, but there is no content to return"
-                              "in the response body.",
-                              StateProvinceSerializer),
-    }
-    responses = {**success_response, **error_responses}
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(
-        operation_id="destroy",
-        operation_summary="Delete an address type",
-        operation_description="Delete an StateProvince record by ID."
-        "Requires admin privileges. Returns 204 No Content on success.",
-        request_body=StateProvinceSerializer,
-        security=[{'Bearer': []}],
-        responses=responses
+    @build_schema_extension(
+        model=model,
+        operation_id='destroy',
+        serializer=StateProvinceDetailResponseSerializer,
+        success_code=204,
+        tags=['Addresses']
     )
-    def destroy(self, request, *args, **kwargs) -> Response:
+    def destroy(
+        self,
+        request: Request,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Response:
         """
-        Delete an StateProvince record by ID.
+        Delete an StateProvince resource.
 
-        Removes the specified StateProvince instance. Requires elevated
-        (admin) privileges.
+        Args:
+            request (Request): The HTTP request instance.
 
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Must include `state_province_id`.
+        Returns:
+            Response: An empty response with 204 No Content status.
 
-        Returns
-        -------
-        Response
-            Empty response with HTTP status 204 No Content.
+        Logging:
+            Logs the ID being deleted and the outcome status.
         """
-        logging.info("DELETE request received for %s", request)
-
-        instance = get_object_or_404(
-            StateProvince,
-            state_province_id=kwargs['state_province_id'])
-        # check permissions: object can be accessed by the user
-        self.check_object_permissions(self.request, instance)
+        instance: StateProvince = self.get_object()
+        log_event(
+            "WARNING",
+            "Delete StateProvince request received",
+            user=str(request.user),
+            id=instance.state_province_id,
+            method=request.method,
+            path=request.get_full_path()
+        )
 
         instance.delete()
 
+        log_event(
+            "INFO",
+            "StateProvince deleted successfully",
+            user=str(request.user),
+            id=instance.state_province_id,
+            status=status.HTTP_204_NO_CONTENT
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    responses = {**success_response, **error_responses}
-
-    @swagger_auto_schema(
-        operation_id="options",
-        operation_summary="Retrieve metadata for StateProvince endpoints.",
-        operation_description="Return metadata for StateProvince endpoints,"
-        "including allowed methods and request formats."
-        "Used by clients for discovery.",
-        request_body=StateProvinceSerializer,
-        security=[{'Bearer': []}],
-        responses=responses
-    )
-    def options(self, request, *args, **kwargs):
-        """
-        Retrieve metadata for StateProvince endpoints.
-
-        Provides information on available HTTP methods, request formats,
-        and a description of the resource.
-
-        Parameters
-        ----------
-        request : Request
-            The HTTP request object.
-        *args : tuple
-            Additional positional arguments.
-        **kwargs : dict
-            Additional keyword arguments.
-
-        Returns
-        -------
-        Response
-            JSON response containing:
-            - `name`: resource name
-            - `description`: description of StateProvince resource
-            - `allowed_methods`: list of supported HTTP methods
-        """
-        logging.info("OPTIONS request received for %s", request)
-
-        data = {
-            "name": "Address Types",
-            "description": "Admin-only CRUD interface for managing address"
-                           "type metadata (e.g., Billing, Shipping, etc.)",
-            "allowed_methods": ["GET", "POST", "PUT",
-                                "PATCH", "DELETE", "OPTIONS", "HEAD"],
-        }
-        return Response({
-            'data': data
-            }, status=status.HTTP_200_OK)
-
-    success_response = {
-        200: openapi.Response(
-                        description="Headers only, no body",
-                        headers={
-                            'Accept': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                description='Response accept'
-                                '(application/json)'
-                            ),
-                            'Content-Type': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                description='Response content type'
-                                '(application/json)'
-                            ),
-                            'Allow': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                description='Supported HTTP methods'
-                            ),
-                            'X-Total-Count': openapi.Schema(
-                                type=openapi.TYPE_INTEGER,
-                                description='Total number of address types'
-                                'available'
-                            )
-                        }
-                    )
-    }
-
-    responses = {**success_response, **error_responses}
-
-    @swagger_auto_schema(
-        operation_id="head",
-        operation_summary="Retrieve metadata headers for address types",
-        operation_description=(
-            "Returns HTTP headers without a response body. Useful for checking"
-            "resource availability, supported methods, and total count of"
-            "address types. Requires admin authentication via Bearer token."
-        ),
-        manual_parameters=[
-            openapi.Parameter(
-                name='Authorization',
-                in_=openapi.IN_HEADER,
-                description='Bearer token for admin authentication',
-                required=True,
-                type=openapi.TYPE_STRING,
-                default='Bearer <access_token>'
-            )
-        ],
-        responses=responses,
-        security=[{'Bearer': []}]
-    )
-    def head(self, request):  # pylint: disable=method-hidden
-        """
-        Retrieve metadata headers for the StateProvince endpoint.
-
-        Returns only HTTP headers without a response body. Useful for
-        checking resource availability, supported methods, and total count.
-
-        Returns
-        -------
-        Response
-            Response with headers:
-            - `Content-Type`: response content type
-            - `Authorization`: required auth header
-            - `Allow`: supported methods
-            - `X-Total-Count`: total number of address types
-        """
-        logging.info("HEAD request received for %s", request)
-
-        total_count = self.get_queryset().count()
-        headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer <access_token>',
-            'Allow': 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD',
-            'X-Total-Count': str(total_count)
-        }
-        return Response(headers=headers, status=status.HTTP_200_OK)
-
-    def get_exception_handler(self):
-        """
-        Get the exception handler for this viewset.
-
-        Uses `drf_standardized_errors` to produce consistent error
-        responses across the API.
-
-        Returns
-        -------
-        function
-            Exception handler function.
-        """
-        return exception_handler
