@@ -5,18 +5,14 @@ tba
 from rest_framework import serializers
 
 from api.people.models.country_region_model import CountryRegion
-from api.people.models.state_province_model import StateProvince
 from api.sales.models.sales_territory_model import SalesTerritory
 from api.people.serializers.country_region_serializer import (
   CountryRegionSerializer
 )
-from api.sales.serializers.sales_territory_serializer import (
-  SalesTerritorySerializer
-)
 from api.utils.hateoas_serializer import HATEOASLinkSerializer
 
 
-class StateProvinceSerializer(serializers.ModelSerializer):
+class SalesTerritorySerializer(serializers.ModelSerializer):
     """
     tba
     """
@@ -30,43 +26,33 @@ class StateProvinceSerializer(serializers.ModelSerializer):
         source='country_region',
         read_only=True
     )
-    sales_territory = serializers.PrimaryKeyRelatedField(
-        # pylint: disable=no-member
-        queryset=SalesTerritory.objects.all(),
-        write_only=True
-    )
-    sales_territory_detail = SalesTerritorySerializer(
-        source='sales_territory',
-        read_only=True
-    )
 
     class Meta:
         """
         tba
         """
 
-        model = StateProvince
+        model = SalesTerritory
         fields = '__all__'
         read_only_fields = [
-            'state_province_id',
+            'sales_territory_id',
             'rowguid',
             'modified_date',
         ]
 
 
-class StateProvinceListResponseSerializer(serializers.Serializer):
+class SalesTerritoryListResponseSerializer(serializers.Serializer):
     """
     tba
     """
     count = serializers.IntegerField()
     links = HATEOASLinkSerializer(many=True)
-    data = StateProvinceSerializer(many=True)
+    data = SalesTerritorySerializer(many=True)
 
 
-class StateProvinceDetailResponseSerializer(serializers.Serializer):
+class SalesTerritoryDetailResponseSerializer(serializers.Serializer):
     """
     tba
     """
     links = HATEOASLinkSerializer(many=True)
-    data = StateProvinceSerializer()
-
+    data = SalesTerritorySerializer()

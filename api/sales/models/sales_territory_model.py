@@ -7,6 +7,12 @@ from django.db import models
 from api.people.models.country_region_model import CountryRegion
 
 
+class SalesTerritoryManager(models.Manager):
+    """
+    tba
+    """
+
+
 class SalesTerritory(models.Model):
     """
     tba
@@ -54,6 +60,8 @@ class SalesTerritory(models.Model):
     modified_date = models.DateTimeField(
         auto_now=True
     )
+
+    objects = SalesTerritoryManager()
 
     def __str__(self):
         return f"{self.name}"
