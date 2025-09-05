@@ -9,19 +9,19 @@ dependencies = [
     "django>=4.2",
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
-    "drf-yasg[validation]>=1.21.10",
     "python-dotenv>=1.1.1",
     "django-cors-headers>=4.7.0",
     "django-filter>=25.1",
     "python-decouple>=3.8",
     "psycopg2>=2.9.10",
-    "drf-standardized-errors>=0.15.0",
     "pytest>=8.4.1",
     "pytest-django>=4.11.1",
     "pytest-cov>=6.2.1",
     "model-bakery>=1.20.5",
     "pytest-factoryboy>=2.8.1",
     "psycopg2-binary>=2.9.10",
+    "drf-spectacular>=0.28.0",
+    "drf-standardized-errors[openapi]>=0.15.0",
 ]
 requires-python = "==3.13.*"
 readme = "README.md"
@@ -31,8 +31,8 @@ license = {text = "MIT"}
 distribution = false
 
 [tool.pdm.scripts]
-adminuser = "python manage.py createsuperuser --settings=core.settings_test"
+adminuser = "python manage.py createsuperuser --settings=core.test"
 makemigrations = "python manage.py makemigrations"
-migrate = "python manage.py migrate --settings=core.settings_test"
-start = "python manage.py runserver --settings=core.settings_test"
+migrate = "python manage.py migrate --settings=core.test"
+start = "python manage.py runserver --settings=core.test"
 post_init = { composite = ["pdm install", "adminuser", "makemigrations", "migrate", "start"] }
