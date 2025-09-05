@@ -11,7 +11,7 @@
 """
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ def log_event(level: str, message: str, **kwargs: Any) -> None:
         **kwargs (Any): Contextual fields (user, method, path, etc).
     """
     log_data: Dict[str, Any] = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "level": level,
         "message": message,
         **kwargs
