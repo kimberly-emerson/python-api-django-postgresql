@@ -7,6 +7,12 @@ from django.db import models
 from api.people.models.country_region_model import CountryRegion
 
 
+class SalesTerritoryManager(models.Manager):
+    """
+    tba
+    """
+
+
 class SalesTerritory(models.Model):
     """
     tba
@@ -57,6 +63,8 @@ class SalesTerritory(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
+    objects = SalesTerritoryManager()
 
     class Meta:
         """

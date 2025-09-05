@@ -1,35 +1,17 @@
 """
-SalesTerritory API ViewSet.
-
-This module provides a Django REST Framework (DRF) implementation for managing
-`SalesTerritory` resources. It supports standard CRUD operations (list,
-retrieve, create, update, partial update, and delete), integrates HATEOAS-style
-responses, and extends Swagger schema documentation for better API
-discoverability.
-
-Logging:
-    All API actions log structured JSON events using `log_event`, which
-    ensures:
-      - Consistent JSON format for logs.
-      - Inclusion of request context (user, method, path, status).
-      - Exclusion of sensitive data (only metadata like payload keys logged).
 """
 
 import logging
 from typing import Any
-from rest_framework import status, filters
-from rest_framework.pagination import PageNumberPagination
+from rest_framework import status, filters, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from api.sales.models.sales_territory_model import SalesTerritory
 from api.sales.serializers.sales_territory_serializer import (
-    SalesTerritorySerializer,
-    SalesTerritoryListResponseSerializer,
-    SalesTerritoryDetailResponseSerializer
+    SalesTerritorySerializer
 )
-from api.viewsets.base_hateoas_viewset import BaseHATEOASViewSet
 from api.config.build_swagger_schema import build_schema_extension
 from api.utils.logging_handler import log_event
 
@@ -37,22 +19,22 @@ from api.utils.logging_handler import log_event
 logger = logging.getLogger(__name__)
 
 
-class SalesTerritoryPagination(PageNumberPagination):
+class SalesTerritoryPagination(viewsets.ModelViewSet):
     """
-    Pagination configuration for SalesTerritory API endpoints.
+    # Pagination configuration for SalesTerritory API endpoints.
 
-    Attributes:
-        - page_size (int): Default number of items per page (10).
-        - page_size_query_param (str): Query parameter to override the page
-        size.
-        - max_page_size (int): Maximum allowed page size (100).
-    """
-    page_size: int = 10
-    page_size_query_param: str = 'page_size'
-    max_page_size: int = 100
+    # Attributes:
+    #     - page_size (int): Default number of items per page (10).
+    #     - page_size_query_param (str): Query parameter to override the page
+    #     size.
+    #     - max_page_size (int): Maximum allowed page size (100).
+    # """
+    # page_size: int = 10
+    # page_size_query_param: str = 'page_size'
+    # max_page_size: int = 100
 
 
-class SalesTerritoryViewSet(BaseHATEOASViewSet):
+class SalesTerritoryViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing SalesTerritory resources.
 
@@ -75,7 +57,6 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head',
                          'options']
-    swagger_tags = ['Sales']
 
     filter_backends = [filters.OrderingFilter]
     ordering_fields = [f'{lookup_field}']
@@ -84,7 +65,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='list',
-        serializer=SalesTerritoryListResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=200,
         tags=['Sales']
     )
@@ -139,7 +120,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='retrieve',
-        serializer=SalesTerritoryDetailResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=200,
         tags=['Sales']
     )
@@ -179,7 +160,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='create',
-        serializer=SalesTerritoryListResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=201,
         tags=['Sales']
     )
@@ -235,7 +216,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='update',
-        serializer=SalesTerritoryDetailResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=200,
         tags=['Sales']
     )
@@ -291,7 +272,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='update',
-        serializer=SalesTerritoryDetailResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=200,
         tags=['Sales']
     )
@@ -347,7 +328,7 @@ class SalesTerritoryViewSet(BaseHATEOASViewSet):
     @build_schema_extension(
         model=model,
         operation_id='destroy',
-        serializer=SalesTerritoryDetailResponseSerializer,
+        serializer=SalesTerritorySerializer,
         success_code=204,
         tags=['Sales']
     )
